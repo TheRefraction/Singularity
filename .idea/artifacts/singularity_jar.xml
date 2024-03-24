@@ -5,7 +5,6 @@
       <element id="archive" name="singularity.jar">
         <element id="module-output" name="singularity" />
       </element>
-      <element id="library" level="project" name="libs" />
     </root>
   </artifact>
 </component>

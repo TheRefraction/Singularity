@@ -23,8 +23,8 @@ public class World {
         chunks = new ArrayList<>();
         entities = new ArrayList<>();
         //load if saved else gen
-        Chunk chunk = new Chunk(0, new Vector2i(0,0));
-        chunk.init(loader);
+        Chunk chunk = new Chunk(0, this, new Vector2i(0,0));
+        chunk.init();
         chunks.add(chunk);
         currentChunk = 0;
     }
@@ -40,6 +40,10 @@ public class World {
     public void cleanup() {
         chunks.get(0).cleanup();
         chunks.clear();
+    }
+
+    public ObjectLoader getLoader() {
+        return loader;
     }
 
     public int getCurrentChunk() {
