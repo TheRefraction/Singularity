@@ -43,8 +43,8 @@ public class BlockRenderer implements IRenderer{
         shader.setUniform("projectionMatrix", Main.getWindow().updateProjectionMatrix());
 
         for(Block block : blocks) {
-            int i = 0;
-            for(Model model : block.getModels()) {
+            for(int i = 0; i < 6; i++) {
+                Model model = block.getModels()[i];
                 if(!block.getRenderFaces()[i])
                     continue;
                 bind(model);
@@ -53,7 +53,6 @@ public class BlockRenderer implements IRenderer{
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
                 unbind();
-                i++;
             }
         }
         blocks.clear();

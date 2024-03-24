@@ -5,15 +5,15 @@ import net.singularity.system.Camera;
 
 public interface IRenderer<T> {
 
-    public void init() throws Exception;
+    void init() throws Exception;
 
-    public void render(Camera camera);
+    void render(Camera camera);
 
-    abstract void bind(Model model);
+    void bind(Model model); //abstract
 
-    public void unbind();
+    void unbind();
 
-    public void prepare(T t, Camera camera);
+    void prepare(T t, Camera camera);
 
-    public void cleanup();
+    void cleanup();
 }
