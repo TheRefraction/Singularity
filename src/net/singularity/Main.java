@@ -1,18 +1,30 @@
 package net.singularity;
 
+import net.singularity.system.Engine;
 import net.singularity.system.Window;
-import org.lwjgl.Version;
+import net.singularity.utils.Const;
 
 public class Main {
+
+    private static Window window;
+    private static Singularity game;
+
     public static void main(String[] args) {
-        System.out.println(Version.getVersion());
-        Window window = new Window("Singularity", 800, 600, false);
-        window.init();
-
-        while(!window.windowShouldClose()) {
-            window.update();
+        window = new Window(Const.TITLE, 800, 600, false);
+        game = new Singularity();
+        Engine engine = new Engine();
+        try {
+            engine.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        window.cleanup();
+    public static Window getWindow() {
+        return window;
+    }
+
+    public static Singularity getGame() {
+        return game;
     }
 }
