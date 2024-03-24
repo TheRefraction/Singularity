@@ -1,5 +1,6 @@
 package net.singularity.system;
 
+import net.singularity.utils.Const;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -9,9 +10,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
 public class Window {
-    public static final float FOV = (float) Math.toRadians(60);
-    public static final float Z_NEAR = 0.01f;
-    public static final float Z_FAR = 1000f;
 
     private final String title;
 
@@ -62,7 +60,7 @@ public class Window {
         GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            this.setResize(true);
+            this.setResized(true);
         });
 
         GLFW.glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
@@ -93,7 +91,7 @@ public class Window {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
+        GL11.glCullFace(GL11.GL_FRONT);
     }
 
     public void update() {
@@ -133,7 +131,7 @@ public class Window {
         return resize;
     }
 
-    public void setResize(boolean resize) {
+    public void setResized(boolean resize) {
         this.resize = resize;
     }
 
@@ -145,7 +143,7 @@ public class Window {
         return height;
     }
 
-    public long getWindow() {
+    public long getWindowHandle() {
         return window;
     }
 
@@ -155,11 +153,11 @@ public class Window {
 
     public Matrix4f updateProjectionMatrix() {
         float aspectRatio = (float) width / height;
-        return projectionMatrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return projectionMatrix.setPerspective(Const.FOV, aspectRatio, Const.Z_NEAR, Const.Z_FAR);
     }
 
     public Matrix4f updateProjectionMatrix(Matrix4f matrix, int width, int height) {
         float aspectRatio = (float) width / height;
-        return matrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        return matrix.setPerspective(Const.FOV, aspectRatio, Const.Z_NEAR, Const.Z_FAR);
     }
 }

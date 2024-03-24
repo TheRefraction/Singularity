@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Main-Class: net.singularity.Main
+Class-Path: lwjgl.jar lwjgl-stb.jar lwjgl-glfw.jar joml-1.10.5.jar lwjgl
+ -assimp.jar lwjgl-openal.jar lwjgl-opengl.jar lwjgl-javadoc.jar lwjgl-s
+ ources.jar lwjgl-stb-javadoc.jar lwjgl-stb-sources.jar lwjgl-glfw-javad
+ oc.jar lwjgl-glfw-sources.jar joml-1.10.5-javadoc.jar joml-1.10.5-sourc
+ es.jar lwjgl-assimp-javadoc.jar lwjgl-assimp-sources.jar lwjgl-openal-j
+ avadoc.jar lwjgl-openal-sources.jar lwjgl-opengl-javadoc.jar lwjgl-open
+ gl-sources.jar lwjgl-natives-windows.jar lwjgl-natives-windows-x86.jar 
+ lwjgl-stb-natives-windows.jar lwjgl-glfw-natives-windows.jar lwjgl-assi
+ mp-natives-windows.jar lwjgl-openal-natives-windows.jar lwjgl-opengl-na
+ tives-windows.jar lwjgl-stb-natives-windows-x86.jar lwjgl-glfw-natives-
+ windows-x86.jar lwjgl-assimp-natives-windows-x86.jar lwjgl-openal-nativ
+ es-windows-x86.jar lwjgl-opengl-natives-windows-x86.jar
+

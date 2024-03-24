@@ -7,22 +7,26 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Engine {
     public static final long NANOSECOND = 1000000000L;
-    public static final float FRAMERATE = 1000;
 
     private static int fps;
-    private static float frametime = 1.0f / FRAMERATE;
-
+    private static float FRAMERATE = 60;
+    private static float frameTime = 1.0f / FRAMERATE;
+    public static float currentFrameTime = 0;
     private boolean isRunning;
-    private Window window;
-    private GLFWErrorCallback errorCallback;
+
+    private Window windowManager;
+    private MouseInput mouseInput;
     private ILogic gameLogic;
+    private GLFWErrorCallback errorCallback;
 
     private void init() throws Exception {
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = Main.getWindow();
+        windowManager = Main.getWindow();
         gameLogic = Main.getGame();
-        window.init();
+        mouseInput = new MouseInput();
+        windowManager.init();
         gameLogic.init();
+        mouseInput.init();
     }
 
     public void start() throws Exception {
@@ -34,13 +38,16 @@ public class Engine {
 
     public void run() {
         this.isRunning = true;
+
         int frames = 0;
         long frameCounter = 0;
+
         long lastTime = System.nanoTime();
         double unprocessedTime = 0;
 
         while(isRunning) {
             boolean render = false;
+
             long startTime = System.nanoTime();
             long passedTime = startTime - lastTime;
             lastTime = startTime;
@@ -48,25 +55,27 @@ public class Engine {
             unprocessedTime += passedTime / (double) NANOSECOND;
             frameCounter += passedTime;
 
-            input();
+            //input();
 
-            while(unprocessedTime > frametime) {
+            while(unprocessedTime > frameTime) {
                 render = true;
-                unprocessedTime -= frametime;
+                unprocessedTime -= frameTime;
 
-                if(window.windowShouldClose())
+                if(windowManager.windowShouldClose())
                     stop();
 
                 if(frameCounter >= NANOSECOND) {
                     setFps(frames);
-                    window.setTitle(Const.TITLE+"("+getFps()+")");
+                    currentFrameTime = 1.0f / fps;
+                    windowManager.setTitle(Const.TITLE+"("+getFps()+")");
                     frames = 0;
                     frameCounter = 0;
                 }
             }
 
             if(render) {
-                update();
+                input();
+                update(frameTime);
                 render();
                 frames++;
 
@@ -82,21 +91,23 @@ public class Engine {
     }
 
     private void input() {
+        mouseInput.input();
         gameLogic.input();
     }
 
     private void render() {
         gameLogic.render();
-        window.update();
+        windowManager.update();
     }
 
-    private void update() {
-        gameLogic.update();
+    private void update(float interval) {
+        gameLogic.update(interval, mouseInput);
     }
 
     private void cleanup() {
-        window.cleanup();
+        windowManager.cleanup();
         gameLogic.cleanup();
+
         errorCallback.free();
         GLFW.glfwTerminate();
     }
