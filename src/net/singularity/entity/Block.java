@@ -7,31 +7,31 @@ import net.singularity.world.Chunk;
 import org.joml.Vector3f;
 
 public class Block {
-    private int blockId;
-    private int localId;
-    private Chunk chunk;
-    private Vector3f pos;
+    private final int blockId;
+    private final int localId;
+    private final Chunk chunk;
+    private final Vector3f pos;
 
     private Model[] models;
     private String[] textures;
-    private boolean[] renderFaces = {true, true, true, true, true, true}; // TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT
+    private final boolean[] renderFaces = {true, true, true, true, true, true}; // TOP, BOTTOM, FRONT, BACK, LEFT, RIGHT
 
     private boolean opaque;
     private boolean hasUpdated;
 
-    private int[] indices = {
+    private final int[] indices = {
             0, 1, 3,
             3, 1, 2
     };
 
-    private float[] textureCoords = {
+    private final float[] textureCoords = {
             0, 0,
             0, 1,
             1, 1,
             1, 0
     };
 
-    private AABB aabb;
+    private AABB boundingBox;
 
     public Block(int blockId, int localId, Chunk chunk, Vector3f pos) throws Exception {
         this.blockId = blockId;
@@ -40,6 +40,7 @@ public class Block {
         this.pos = pos;
         init_texture();
         init_model();
+        init_AABB();
     }
 
     private void init_texture() {
@@ -57,7 +58,7 @@ public class Block {
         float[] vertices;
         models = new Model[6];
 
-        ObjectLoader loader = chunk.getWorld().getLoader();
+        ObjectLoader loader = Chunk.getWorld().getLoader();
 
         //TOP
         vertices = new float[]{-1f, 1f, 1f,
@@ -110,10 +111,19 @@ public class Block {
         hasUpdated = false;
     }
 
+    public void init_AABB() {
+        Vector3f minVec = new Vector3f(this.pos).sub(1, 1, 1);
+        Vector3f maxVec = new Vector3f(this.pos).add(1, 1, 1);
+        this.boundingBox = new AABB(minVec, maxVec);
+    }
+
     public void update(float interval) {
         if(!hasUpdated) {
             updateRenderingFaces();
             hasUpdated = true;
+        }
+        if(Chunk.getWorld().getCamera().getDistanceFrom(this.pos) <= 4.0f) {
+            //System.out.println(chunk.getWorld().getCamera().getBoundingBox().intersect(this.boundingBox));
         }
     }
 
@@ -128,7 +138,7 @@ public class Block {
             neighborBlocks[1] = -1;
         else neighborBlocks[1] = localId - Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE;
 
-        if(localId % (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE) >= (Const.CHUNK_BASE_SIZE * (Const.CHUNK_BASE_SIZE - 1)) && localId % (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE) < Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE)
+        if(localId % (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE) >= (Const.CHUNK_BASE_SIZE * (Const.CHUNK_BASE_SIZE - 1))) // (&& localId % (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE) < Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE)
             neighborBlocks[2] = -1;
         else neighborBlocks[2] = localId + Const.CHUNK_BASE_SIZE;
 
@@ -149,15 +159,11 @@ public class Block {
 
     public void updateRenderingFaces() {
         int[] neighborBlocks = getNeighborBlocks();
-        //System.out.println(localId);
-        //System.out.println("===");
         for(int i = 0; i < 6 ; i++) {
-            //System.out.println(neighborBlocks[i]);
             if(neighborBlocks[i] == -1) {
                 renderFaces[i] = true;
-            } else renderFaces[i] = !chunk.getBlocks().get(neighborBlocks[i]).isOpaque();;
+            } else renderFaces[i] = !Chunk.getBlocks().get(neighborBlocks[i]).isOpaque();
         }
-        //System.out.println("-------------");
     }
 
     public void setPos(float x, float y, float z) {
@@ -188,5 +194,9 @@ public class Block {
 
     public Model[] getModels() {
         return models;
+    }
+
+    public AABB getBoundingBox() {
+        return boundingBox;
     }
 }

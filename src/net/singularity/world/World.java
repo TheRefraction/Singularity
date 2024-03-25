@@ -1,6 +1,7 @@
 package net.singularity.world;
 
 import net.singularity.entity.Entity;
+import net.singularity.system.Camera;
 import net.singularity.system.ObjectLoader;
 import net.singularity.system.rendering.RenderManager;
 import org.joml.Vector2i;
@@ -15,8 +16,11 @@ public class World {
     private List<Chunk> chunks;
     private List<Entity> entities;
 
-    public World(ObjectLoader loader) {
+    private Camera camera;
+
+    public World(ObjectLoader loader, Camera camera) {
         this.loader = loader;
+        this.camera = camera;
     }
 
     public void init() throws Exception {
@@ -44,6 +48,10 @@ public class World {
 
     public ObjectLoader getLoader() {
         return loader;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     public int getCurrentChunk() {
