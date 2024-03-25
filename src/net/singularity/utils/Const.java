@@ -11,6 +11,6 @@ public class Const {
     public static final float CAMERA_MOVE_SPEED = 0.1f;
 
     public static final int CHUNK_BASE_SIZE = 16;
-    public static final int CHUNK_HEIGHT = 16;
+    public static final int CHUNK_HEIGHT = 2;
     public static final int MAX_BLOCKS_PER_CHUNK = CHUNK_BASE_SIZE * CHUNK_BASE_SIZE * CHUNK_HEIGHT;
 }

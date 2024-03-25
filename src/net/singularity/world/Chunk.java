@@ -1,7 +1,6 @@
 package net.singularity.world;
 
 import net.singularity.entity.Block;
-import net.singularity.system.ObjectLoader;
 import net.singularity.system.rendering.RenderManager;
 import net.singularity.utils.Const;
 import org.joml.Vector2i;

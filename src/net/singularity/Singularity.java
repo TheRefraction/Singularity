@@ -25,7 +25,7 @@ public class Singularity implements ILogic {
         window = Main.getWindow();
         loader = new ObjectLoader();
         camera = new Camera();
-        world = new World(loader);
+        world = new World(loader, camera);
 
         cameraInc = new Vector3f(0,0,0);
     }
