@@ -16,10 +16,10 @@ import org.lwjgl.opengl.GL30;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockRenderer implements IRenderer{
+public class BlockRenderer implements IRenderer {
 
-    private Shader shader;
-    private List<Block> blocks;
+    private final Shader shader;
+    private final List<Block> blocks;
 
     public BlockRenderer() throws Exception {
         blocks = new ArrayList<>();

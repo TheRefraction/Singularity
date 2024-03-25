@@ -1,6 +1,7 @@
 package net.singularity.system;
 
 import net.singularity.entity.Model;
+import net.singularity.utils.SException;
 import net.singularity.utils.Utils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -37,10 +38,9 @@ public class ObjectLoader {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
-
             buffer = STBImage.stbi_load(filename, w, h, c, 4);
             if(buffer == null)
-                throw new Exception("Couldn't load " + filename + "\nINFO : " + STBImage.stbi_failure_reason());
+                SException.raiseException(new Exception("Couldn't load " + filename + "\nINFO : " + STBImage.stbi_failure_reason()));
 
             width = w.get();
             height = h.get();

@@ -1,5 +1,6 @@
 package net.singularity.system;
 
+import net.singularity.utils.SException;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -19,7 +20,7 @@ public class Shader {
     public Shader() throws Exception {
         programID = GL20.glCreateProgram();
         if(programID == 0)
-            throw new Exception("Could not create shader");
+            SException.raiseException(new Exception("Could not create shader"));
 
         uniforms = new HashMap<>();
     }
@@ -27,7 +28,7 @@ public class Shader {
     public void createUniform(String uniformName) throws Exception {
         int uniformLocation = GL20.glGetUniformLocation(programID, uniformName);
         if(uniformLocation < 0)
-            throw new Exception("Could not uniform " + uniformName);
+            SException.raiseException(new Exception("Could not uniform " + uniformName));
         uniforms.put(uniformName, uniformLocation);
     }
 
@@ -69,13 +70,13 @@ public class Shader {
     public int createShader(String shaderCode, int shaderType) throws Exception {
         int shaderID = GL20.glCreateShader(shaderType);
         if(shaderID == 0)
-            throw new Exception("Error creating shader. Type : " + shaderType);
+            SException.raiseException(new Exception("Error creating shader. Type : " + shaderType));
 
         GL20.glShaderSource(shaderID, shaderCode);
         GL20.glCompileShader(shaderID);
 
         if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0)
-            throw new Exception("Error compiling shader code. Type : " + shaderType + " Info : " + GL20.glGetShaderInfoLog(shaderID, 1024));
+            SException.raiseException(new Exception("Error compiling shader code. Type : " + shaderType + " Info : " + GL20.glGetShaderInfoLog(shaderID, 1024)));
 
         GL20.glAttachShader(programID, shaderID);
 
@@ -85,7 +86,7 @@ public class Shader {
     public void link() throws Exception {
         GL20.glLinkProgram(programID);
         if(GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == 0)
-            throw new Exception("Error linking shader code. Info : " + GL20.glGetProgramInfoLog(programID, 1024));
+            SException.raiseException(new Exception("Error linking shader code. Info : " + GL20.glGetProgramInfoLog(programID, 1024)));
 
         if(vertexShaderID != 0)
             GL20.glDetachShader(programID, vertexShaderID);
@@ -95,7 +96,7 @@ public class Shader {
 
         GL20.glValidateProgram(programID);
         if(GL20.glGetProgrami(programID, GL20.GL_VALIDATE_STATUS) == 0)
-            throw new Exception("Unable to validate shader code. Info : " +  GL20.glGetProgramInfoLog(programID, 1024));
+            SException.raiseException(new Exception("Unable to validate shader code. Info : " +  GL20.glGetProgramInfoLog(programID, 1024)));
     }
 
     public void bind() {

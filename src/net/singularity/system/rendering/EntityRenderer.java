@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class EntityRenderer implements IRenderer {
 
-    private Shader shader;
-    private Map<Model, List<Entity>> entities;
+    private final Shader shader;
+    private final Map<Model, List<Entity>> entities;
 
     public EntityRenderer() throws Exception {
         entities = new HashMap<>();

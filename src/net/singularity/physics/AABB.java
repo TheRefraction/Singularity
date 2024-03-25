@@ -27,10 +27,18 @@ public class AABB {
 
     public boolean intersect(AABB other) {
         return this.minPos.x <= other.maxPos.x
-                && this.maxPos.x >= other.minPos.x
-                && this.minPos.y <= other.maxPos.y
-                && this.maxPos.y >= other.minPos.y
-                && this.minPos.z <= other.maxPos.z
-                && this.maxPos.z >= other.minPos.z;
+            && this.maxPos.x >= other.minPos.x
+            && this.minPos.y <= other.maxPos.y
+            && this.maxPos.y >= other.minPos.y
+            && this.minPos.z <= other.maxPos.z
+            && this.maxPos.z >= other.minPos.z;
+    }
+
+    public Vector3f getMinVec() {
+        return minVec;
+    }
+
+    public Vector3f getMaxVec() {
+        return maxVec;
     }
 }

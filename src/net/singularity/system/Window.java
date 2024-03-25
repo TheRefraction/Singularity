@@ -1,6 +1,7 @@
 package net.singularity.system;
 
 import net.singularity.utils.Const;
+import net.singularity.utils.SException;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -33,7 +34,7 @@ public class Window {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if(!GLFW.glfwInit()) {
-            throw new IllegalStateException("Unable to initialize GLFW!");
+            SException.raiseException(new IllegalStateException("Unable to initialize GLFW!"));
         }
 
         GLFW.glfwDefaultWindowHints();
@@ -54,7 +55,7 @@ public class Window {
 
         window = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if(window == MemoryUtil.NULL) {
-            throw new RuntimeException("Failed to create GLFW window!");
+            SException.raiseException(new RuntimeException("Failed to create GLFW window!"));
         }
 
         GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {

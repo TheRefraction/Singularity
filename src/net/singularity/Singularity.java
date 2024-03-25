@@ -8,9 +8,9 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import javax.swing.JOptionPane;
 
 public class Singularity implements ILogic {
-
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final Window window;
