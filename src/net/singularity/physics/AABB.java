@@ -6,13 +6,6 @@ public class AABB {
     private Vector3f minVec, maxVec;
     private Vector3f minPos, maxPos;
 
-    public AABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
-        this.minVec = new Vector3f(minX, minY, minZ);
-        this.maxVec = new Vector3f(maxX, maxY, maxZ);
-        this.minPos = this.minVec;
-        this.maxPos = this.maxVec;
-    }
-
     public AABB(Vector3f minVec, Vector3f maxVec) {
         this.minVec = minVec;
         this.maxVec = maxVec;

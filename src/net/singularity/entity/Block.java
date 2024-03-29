@@ -58,7 +58,7 @@ public class Block {
         float[] vertices;
         models = new Model[6];
 
-        ObjectLoader loader = Chunk.getWorld().getLoader();
+        ObjectLoader loader = chunk.getWorld().getLoader();
 
         //TOP
         vertices = new float[]{-1f, 1f, 1f,
@@ -122,9 +122,6 @@ public class Block {
             updateRenderingFaces();
             hasUpdated = true;
         }
-        if(Chunk.getWorld().getCamera().getDistanceFrom(this.pos) <= 4.0f) {
-            //System.out.println(chunk.getWorld().getCamera().getBoundingBox().intersect(this.boundingBox));
-        }
     }
 
     public int[] getNeighborBlocks() {
@@ -162,7 +159,7 @@ public class Block {
         for(int i = 0; i < 6 ; i++) {
             if(neighborBlocks[i] == -1) {
                 renderFaces[i] = true;
-            } else renderFaces[i] = !Chunk.getBlocks().get(neighborBlocks[i]).isOpaque();
+            } else renderFaces[i] = !chunk.getBlocks().get(neighborBlocks[i]).isOpaque();
         }
     }
 

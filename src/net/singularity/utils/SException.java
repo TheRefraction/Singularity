@@ -3,7 +3,7 @@ package net.singularity.utils;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 public class SException {
-    private static Component mainComponent = null;
+    private final static Component mainComponent = null;
 
     public static void raiseException(Exception e) throws Exception {
         String msg = "An exception has occurred.\n\n" + e.toString();

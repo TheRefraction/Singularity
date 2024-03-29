@@ -15,6 +15,10 @@ public class Entity {
         this.scale = scale;
     }
 
+    public void update(float interval) {
+
+    }
+
     public void movePos(float x, float y, float z) {
         this.pos.x += x;
         this.pos.y += y;

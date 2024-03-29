@@ -6,11 +6,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Engine {
-    public static final long NANOSECOND = 1000000000L;
 
     private static int fps;
-    private static float FRAMERATE = 60;
-    private static float frameTime = 1.0f / FRAMERATE;
+    private final float FRAMERATE = 60;
+    private final float frameTime = 1.0f / FRAMERATE;
     public static float currentFrameTime = 0;
     private boolean isRunning;
 
@@ -52,7 +51,7 @@ public class Engine {
             long passedTime = startTime - lastTime;
             lastTime = startTime;
 
-            unprocessedTime += passedTime / (double) NANOSECOND;
+            unprocessedTime += passedTime / (double) Const.NANOSECOND;
             frameCounter += passedTime;
 
             //input();
@@ -64,7 +63,7 @@ public class Engine {
                 if(windowManager.windowShouldClose())
                     stop();
 
-                if(frameCounter >= NANOSECOND) {
+                if(frameCounter >= Const.NANOSECOND) {
                     setFps(frames);
                     currentFrameTime = 1.0f / fps;
                     windowManager.setTitle(Const.TITLE+"("+getFps()+")");
@@ -92,7 +91,7 @@ public class Engine {
 
     private void input() {
         mouseInput.input();
-        gameLogic.input();
+        gameLogic.input(mouseInput);
     }
 
     private void render() {
@@ -101,7 +100,7 @@ public class Engine {
     }
 
     private void update(float interval) {
-        gameLogic.update(interval, mouseInput);
+        gameLogic.update(interval);
     }
 
     private void cleanup() {

@@ -11,23 +11,24 @@ import java.util.List;
 
 public class Chunk {
 
-    private static int id;
-    private static World world;
-    private static Vector2i position;
-    private static boolean loaded = false;
+    private final int id;
+    private final World world;
+    private final Vector2i position;
+    private boolean loaded = false;
 
-    private static List<Block> blocks;
+    private List<Block> blocks;
 
     public Chunk(int id, World world, Vector2i position) {
         this.id = id;
         this.world = world;
         this.position = new Vector2i(position).mul(Const.CHUNK_BASE_SIZE);
+        System.out.println(this.position);
     }
 
     public void init() throws Exception {
         blocks = new ArrayList<>();
         for(int i=0; i < Const.MAX_BLOCKS_PER_CHUNK; i++) {
-            float x, y, z;
+            int x, y, z;
             x = position.x + 2 * (i % Const.CHUNK_BASE_SIZE);
             y = 2 * (i / (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE));
             z = position.y + 2 * ((i / Const.CHUNK_BASE_SIZE) % Const.CHUNK_BASE_SIZE);
@@ -53,19 +54,19 @@ public class Chunk {
         blocks.clear();
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
     }
 
-    public static World getWorld() {
+    public World getWorld() {
         return world;
     }
 
-    public static List<Block> getBlocks() {
+    public List<Block> getBlocks() {
         return blocks;
     }
 
-    public static Vector2i getPosition() {
+    public Vector2i getPosition() {
         return position;
     }
 }
