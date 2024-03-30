@@ -34,4 +34,12 @@ public class AABB {
     public Vector3f getMaxVec() {
         return maxVec;
     }
+
+    public Vector3f getMinPos() {
+        return minPos;
+    }
+
+    public Vector3f getMaxPos() {
+        return maxPos;
+    }
 }

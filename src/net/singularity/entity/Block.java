@@ -18,6 +18,7 @@ public class Block {
 
     private boolean opaque;
     private boolean hasUpdated;
+    private boolean selected;
 
     private final int[] indices = {
             0, 1, 3,
@@ -38,6 +39,8 @@ public class Block {
         this.localId = localId;
         this.chunk = chunk;
         this.pos = pos;
+        this.hasUpdated = false;
+        this.selected = false;
         init_texture();
         init_model();
         init_AABB();

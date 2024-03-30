@@ -56,9 +56,11 @@ public class Player {
     }
 
     public void update(float interval) {
-        for(Block block : world.getCurrentChunk().getBlocks()) {
-            if(getDistanceFrom(block.getPos()) <= 3.0f)
-                colList.add(block);
+        if(world.getCurrentChunk() != null) {
+            for (Block block : world.getCurrentChunk().getBlocks()) {
+                if (getDistanceFrom(block.getPos()) <= 3.0f)
+                    colList.add(block);
+            }
         }
 
         if(onGround || noClip) {
@@ -117,7 +119,7 @@ public class Player {
             else eyeHeight = 1.25f;
         }
 
-        posInc.mul(speed);
+        posInc.mul(noClip ? Const.CAMERA_MOVE_SPEED : speed);
 
         if(mouseInput.isLeftButtonPress()) {
             Vector2f rotVec = mouseInput.getDisplVec().mul(Const.MOUSE_SENSITIVITY);

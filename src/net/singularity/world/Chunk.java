@@ -11,18 +11,17 @@ import java.util.List;
 
 public class Chunk {
 
-    private final int id;
+    private final long id;
     private final World world;
     private final Vector2i position;
     private boolean loaded = false;
 
     private List<Block> blocks;
 
-    public Chunk(int id, World world, Vector2i position) {
+    public Chunk(long id, World world, Vector2i position) {
         this.id = id;
         this.world = world;
-        this.position = new Vector2i(position).mul(Const.CHUNK_BASE_SIZE);
-        System.out.println(this.position);
+        this.position = new Vector2i(position).mul(2* Const.CHUNK_BASE_SIZE);
     }
 
     public void init() throws Exception {
@@ -46,7 +45,9 @@ public class Chunk {
 
         for(Block block : blocks) {
             block.update(interval);
-            renderer.processBlock(block);
+
+            if(world.getPlayer().getDistanceFrom(block.getPos()) <= Const.RENDER_DISTANCE && world.getCamera().getFrustumFilter().insideFrustum(block.getBoundingBox()))
+                renderer.processBlock(block);
         }
     }
 
@@ -54,7 +55,7 @@ public class Chunk {
         blocks.clear();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

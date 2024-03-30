@@ -5,17 +5,20 @@ import net.singularity.entity.Player;
 import net.singularity.system.Camera;
 import net.singularity.system.ObjectLoader;
 import net.singularity.system.rendering.RenderManager;
+import net.singularity.utils.Const;
+import net.singularity.utils.Utils;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class World {
-    private static int currentChunk = -1;
+    private static long currentChunk = -1;
     private final ObjectLoader loader;
 
-    private List<Chunk> chunks;
+    private HashMap<Long, Chunk> chunks;
     private List<Entity> entities;
 
     private final Camera camera;
@@ -28,31 +31,38 @@ public class World {
     }
 
     public void init() throws Exception {
-        chunks = new ArrayList<>();
+        chunks = new HashMap<Long, Chunk>();
         entities = new ArrayList<>();
         //load if saved else gen
-        Chunk chunk = new Chunk(0, this, new Vector2i(0,0));
-        chunk.init();
-        chunks.add(chunk);
-        Chunk chunk2 = new Chunk(1, this, new Vector2i(3,0));
-        chunk2.init();
-        chunks.add(chunk2);
+        Chunk chunk;
+        for(int i = -3; i <= 3; i++) {
+            for (int j = -3; j <= 3; j++) {
+                long tokenId = Const.CHUNK_MAX_LINE * j + i;
+                chunk = new Chunk(tokenId, this, new Vector2i(i, j));
+                chunk.init();
+                chunks.put(tokenId, chunk);
+            }
+        }
+
         currentChunk = 0;
     }
 
     public void update(float interval, RenderManager renderer) {
         player.update(interval);
-        chunks.get(0).update(interval, renderer);
-        chunks.get(1).update(interval, renderer);
+        for(long i : chunks.keySet())
+            chunks.get(i).update(interval, renderer);
 
-        for(Entity entity : entities) {
+        for(Entity entity : entities)
             renderer.processEntity(entity);
-        }
+
+        long tmpX = (long) (player.getPos().x / Const.CHUNK_BASE_SIZE / 2 + ((player.getPos().x < 0) ? -1 : 0));
+        long tmpZ = (long) (player.getPos().z / Const.CHUNK_BASE_SIZE / 2 + ((player.getPos().z < 0) ? -1 : 0));
+        currentChunk = (Const.CHUNK_MAX_LINE * tmpZ + tmpX);
     }
 
     public void cleanup() {
-        chunks.get(0).cleanup();
-        chunks.get(1).cleanup();
+        for(long i : chunks.keySet())
+            chunks.get(i).cleanup();
         chunks.clear();
     }
 
@@ -64,11 +74,11 @@ public class World {
         return camera;
     }
 
-    public int getCurrentChunkID() {
+    public long getCurrentChunkID() {
         return currentChunk;
     }
 
-    public List<Chunk> getChunks() {
+    public HashMap<Long, Chunk> getChunks() {
         return chunks;
     }
 

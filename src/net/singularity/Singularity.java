@@ -2,6 +2,7 @@ package net.singularity;
 
 import net.singularity.system.*;
 import net.singularity.system.rendering.RenderManager;
+import net.singularity.utils.Transformation;
 import net.singularity.world.World;
 
 public class Singularity implements ILogic {
@@ -9,7 +10,6 @@ public class Singularity implements ILogic {
     private final ObjectLoader loader;
     private final Window window;
     private final World world;
-
     private final Camera camera;
 
     public Singularity() {
@@ -33,7 +33,7 @@ public class Singularity implements ILogic {
 
     @Override
     public void update(float interval) {
-        //camera.movePosition(cameraInc.x, cameraInc.y, cameraInc.z);
+        camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
         world.update(interval, renderer);
     }
 

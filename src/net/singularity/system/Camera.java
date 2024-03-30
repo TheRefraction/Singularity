@@ -5,10 +5,12 @@ import org.joml.Vector3f;
 public class Camera {
 
     private Vector3f position, rotation;
+    private FrustumCullingFilter frustumFilter;
 
     public Camera() {
-        position = new Vector3f(0, 0, 0);
-        rotation = new Vector3f(0, 0, 0);
+        this.position = new Vector3f(0, 0, 0);
+        this.rotation = new Vector3f(0, 0, 0);
+        this.frustumFilter = new FrustumCullingFilter();
     }
 
     public void setPosition(float x, float y, float z) {
@@ -31,7 +33,7 @@ public class Camera {
         return rotation;
     }
 
-    public float getDistanceFrom(Vector3f position) {
-        return position.distance(this.position);
+    public FrustumCullingFilter getFrustumFilter() {
+        return frustumFilter;
     }
 }
