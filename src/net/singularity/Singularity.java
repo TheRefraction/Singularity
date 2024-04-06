@@ -13,15 +13,17 @@ public class Singularity implements ILogic {
     private final Camera camera;
 
     public Singularity() {
-        renderer = new RenderManager();
-        window = Main.getWindow();
         loader = new ObjectLoader();
+        renderer = new RenderManager(loader);
+        window = Main.getWindow();
         camera = new Camera();
         world = new World(loader, camera);
     }
 
     @Override
     public void init() throws Exception {
+        loader.loadBlockTexture();
+        loader.initBlockModels();
         renderer.init();
         world.init();
     }

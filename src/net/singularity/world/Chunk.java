@@ -1,73 +1,37 @@
 package net.singularity.world;
 
-import net.singularity.entity.Block;
+import net.singularity.physics.AABB;
 import net.singularity.system.rendering.RenderManager;
-import net.singularity.utils.Const;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.joml.Vector3i;
 
 public class Chunk {
+    public final World world;
+    public final Vector3i posMin;
+    public final Vector3i posMax;
+    public final Vector3f position;
+    public final AABB boundingBox;
 
-    private final long id;
-    private final World world;
-    private final Vector2i position;
-    private boolean loaded = false;
-
-    private List<Block> blocks;
-
-    public Chunk(long id, World world, Vector2i position) {
-        this.id = id;
+    public Chunk(World world, Vector3i posMin, Vector3i posMax) {
         this.world = world;
-        this.position = new Vector2i(position).mul(2* Const.CHUNK_BASE_SIZE);
+        this.posMin = posMin;
+        this.posMax = posMax;
+        this.position = new Vector3f((posMin.x + posMax.x) / 2.0f, (posMin.y + posMax.y) / 2.0f, (posMin.z + posMax.z) / 2.0f);
+        this.boundingBox = new AABB((float)posMin.x, (float)posMin.y, (float)posMin.z, (float)posMax.x, (float)posMax.y, (float)posMax.z);
     }
 
-    public void init() throws Exception {
-        blocks = new ArrayList<>();
-        for(int i=0; i < Const.MAX_BLOCKS_PER_CHUNK; i++) {
-            int x, y, z;
-            x = position.x + 2 * (i % Const.CHUNK_BASE_SIZE);
-            y = 2 * (i / (Const.CHUNK_BASE_SIZE * Const.CHUNK_BASE_SIZE));
-            z = position.y + 2 * ((i / Const.CHUNK_BASE_SIZE) % Const.CHUNK_BASE_SIZE);
-
-            Block block = new Block(0, i, this, new Vector3f(x, y, z));
-            blocks.add(block);
+    public void render(RenderManager renderer) {
+        int tiles = 0;
+        for(int x = this.posMin.x; x < this.posMax.x; ++x) {
+            for(int y = this.posMin.y; y < this.posMax.y; ++y) {
+                for(int z = this.posMin.z; z < this.posMax.z; ++z) {
+                    int tileId = this.world.getTile(x, y, z);
+                    if (tileId > 0) {
+                        renderer.processBlock(this.world, tileId, x, y, z);
+                        ++tiles;
+                    }
+                }
+            }
         }
-
-        loaded = true;
-    }
-
-    public void update(float interval, RenderManager renderer) {
-        if(!loaded)
-            return;
-
-        for(Block block : blocks) {
-            block.update(interval);
-
-            if(world.getPlayer().getDistanceFrom(block.getPos()) <= Const.RENDER_DISTANCE && world.getCamera().getFrustumFilter().insideFrustum(block.getBoundingBox()))
-                renderer.processBlock(block);
-        }
-    }
-
-    public void cleanup() {
-        blocks.clear();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public List<Block> getBlocks() {
-        return blocks;
-    }
-
-    public Vector2i getPosition() {
-        return position;
     }
 }

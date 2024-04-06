@@ -13,8 +13,14 @@ public class Const {
     public static final float CAMERA_MOVE_SPEED = 0.4f;
     public static final float COLLISION_GRANULARITY = 0.01f;
 
-    public static final int CHUNK_MAX_LINE = 32;
-    public static final int CHUNK_BASE_SIZE = 16;
-    public static final int CHUNK_HEIGHT = 2;
-    public static final int MAX_BLOCKS_PER_CHUNK = CHUNK_BASE_SIZE * CHUNK_BASE_SIZE * CHUNK_HEIGHT;
+    public static final int CHUNK_WIDTH = 16;
+    public static final int CHUNK_HEIGHT = 16;
+    public static final int CHUNK_DEPTH = 16;
+    public static final int MAX_BLOCKS_PER_CHUNK = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH;
+
+    public static final int REGION_BASE_SIZE = 256;
+
+    public static final int WORLD_WIDTH = 128;
+    public static final int WORLD_HEIGHT = 128;
+    public static final int WORLD_DEPTH = 64;
 }

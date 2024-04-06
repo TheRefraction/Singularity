@@ -1,6 +1,7 @@
 package net.singularity.system;
 
 import net.singularity.entity.Model;
+import net.singularity.entity.Texture;
 import net.singularity.utils.SException;
 import net.singularity.utils.Utils;
 import org.lwjgl.opengl.GL11;
@@ -22,6 +23,9 @@ public class ObjectLoader {
     private List<Integer> vbos = new ArrayList<>();
     private List<Integer> textures = new ArrayList<>();
 
+    private Texture blockTexture;
+    private Model[] blockModels;
+
     public Model loadModel(float[] vertices, float[] textureCoords, int[] indices) {
         int id = createVAO();
         storeIndicesBuffer(indices);
@@ -29,6 +33,12 @@ public class ObjectLoader {
         storeDataInAttribList(1, 2, textureCoords);
         unbind();
         return new Model(id, indices.length);
+    }
+
+    public Model updateModelTexCoords(Model model, float[] textureCoords) {
+        changeDataInAttribList(3 * model.getId(), 1, 2, textureCoords);
+        unbind();
+        return new Model(model.getId(), model.getVertexCount());
     }
 
     public int loadTexture(String filename) throws Exception {
@@ -57,6 +67,88 @@ public class ObjectLoader {
         return id;
     }
 
+    public void initBlockModels() {
+        blockModels = new Model[6];
+        float[] vertices;
+        float[] textureCoords = {
+                0, 1,
+                0, 0,
+                1, 0,
+                1, 1
+        };
+
+        int[] tileIndices = {
+                0, 1, 3,
+                3, 1, 2
+        };
+
+        vertices = new float[] {
+                0, 0, 1,
+                0, 0, 0,
+                1, 0, 0,
+                1, 0, 1
+        };
+
+        blockModels[0] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                1, 1, 1,
+                1, 1, 0,
+                0, 1, 0,
+                0, 1, 1
+        };
+
+        blockModels[1] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 1, 0,
+                1, 1, 0,
+                1, 0, 0,
+                0, 0, 0
+        };
+
+        blockModels[2] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 1, 1,
+                0, 0, 1,
+                1, 0, 1,
+                1, 1, 1
+        };
+
+        blockModels[3] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 1, 1,
+                0, 1, 0,
+                0, 0, 0,
+                0, 0, 1
+        };
+
+        blockModels[4] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                1, 0, 1,
+                1, 0, 0,
+                1, 1, 0,
+                1, 1, 1
+        };
+
+        blockModels[5] = this.loadModel(vertices, textureCoords, tileIndices);
+    }
+
+    public Model getBlockModels(int face) {
+        return this.blockModels[face];
+    }
+
+    public void loadBlockTexture() throws Exception {
+        blockTexture = new Texture(loadTexture("resources/textures/terrain.png"));
+    }
+
+    public Texture getBlockTexture() {
+        return this.blockTexture;
+    }
+
     private int createVAO() {
         int id = GL30.glGenVertexArrays();
         vaos.add(id);
@@ -75,6 +167,10 @@ public class ObjectLoader {
     private void storeDataInAttribList(int attribNo, int vertexCount, float[] data) {
         int vbo = GL15.glGenBuffers();
         vbos.add(vbo);
+        changeDataInAttribList(vbo, attribNo, vertexCount, data);
+    }
+
+    private void changeDataInAttribList(int vbo, int attribNo, int vertexCount, float[] data) {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
         FloatBuffer buffer = Utils.storeDataInFloatBuffer(data);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);

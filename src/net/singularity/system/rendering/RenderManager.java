@@ -1,10 +1,14 @@
 package net.singularity.system.rendering;
 
-import net.singularity.entity.Block;
 import net.singularity.Main;
+import net.singularity.block.Block;
 import net.singularity.entity.Entity;
 import net.singularity.system.Camera;
+import net.singularity.system.ObjectLoader;
 import net.singularity.system.Window;
+import net.singularity.world.World;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -12,17 +16,20 @@ import java.util.List;
 public class RenderManager {
 
     private final Window window;
+    private final ObjectLoader loader;
     private EntityRenderer entityRenderer;
     private BlockRenderer blockRenderer;
 
-    public RenderManager() {
+    public RenderManager(ObjectLoader loader) {
         window = Main.getWindow();
+        this.loader = loader;
     }
 
     public void init() throws Exception {
-        entityRenderer = new EntityRenderer();
+        entityRenderer = new EntityRenderer(this);
         entityRenderer.init();
-        blockRenderer = new BlockRenderer();
+
+        blockRenderer = new BlockRenderer(this);
         blockRenderer.init();
     }
 
@@ -49,8 +56,19 @@ public class RenderManager {
         }
     }
 
-    public void processBlock(Block block) {
-        blockRenderer.getBlocks().add(block);
+    public void processBlock(World world, int tileId, int x, int y, int z) {
+        List<Integer> facesToRender = Block.blocks[tileId].getFacesToRender(world, x, y, z);
+        for(int face : facesToRender) {
+            Vector2i key = new Vector2i(tileId, face);
+            List<Vector3f> blockList = blockRenderer.getBlocks().get(key);
+            if (blockList != null)
+                blockList.add(new Vector3f(x, y, z));
+            else {
+                List<Vector3f> newPosList = new ArrayList<>();
+                newPosList.add(new Vector3f(x, y, z));
+                blockRenderer.getBlocks().put(key, newPosList);
+            }
+        }
     }
 
     public void clear() {
@@ -60,5 +78,9 @@ public class RenderManager {
     public void cleanup() {
         entityRenderer.cleanup();
         blockRenderer.cleanup();
+    }
+
+    public ObjectLoader getLoader() {
+        return this.loader;
     }
 }

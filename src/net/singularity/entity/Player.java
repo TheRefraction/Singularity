@@ -5,17 +5,12 @@ import net.singularity.physics.AABB;
 import net.singularity.system.MouseInput;
 import net.singularity.system.Window;
 import net.singularity.utils.Const;
-import net.singularity.utils.Utils;
 import net.singularity.world.World;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.Math.abs;
 import static java.lang.Math.clamp;
 
 public class Player {
@@ -24,7 +19,6 @@ public class Player {
     private boolean noClip;
     private boolean onGround;
     private float eyeHeight;
-    private float health;
     private float speed;
     private float jumpHeight;
     private float ySpeed;
@@ -33,8 +27,6 @@ public class Player {
 
     private AABB boundingBox;
 
-    private final List<Block> colList;
-
     public Player(World world, Vector3f pos, Vector3f rotation) {
         this.pos = pos;
         this.rotation = rotation;
@@ -42,40 +34,26 @@ public class Player {
         this.noClip = false;
         this.onGround = true;
         this.eyeHeight = 1.5f;
-        this.health = 20.0f;
         this.speed = 0.1f;
         this.jumpHeight = 0.2f;
         this.ySpeed = 0;
         this.posInc = new Vector3f(0,0,0);
-        this.colList = new ArrayList<>();
-        init_AABB();
-    }
-
-    public void init_AABB() {
-        this.boundingBox = new AABB(new Vector3f(-1, -1, -1), new Vector3f(1,1,1));
     }
 
     public void update(float interval) {
-        if(world.getCurrentChunk() != null) {
-            for (Block block : world.getCurrentChunk().getBlocks()) {
-                if (getDistanceFrom(block.getPos()) <= 3.0f)
-                    colList.add(block);
-            }
-        }
-
-        if(onGround || noClip) {
+        /*if(onGround || noClip) {
             if(ySpeed < 0)
                 ySpeed = 0;
         } else
-            ySpeed -= 0.008f;
+            ySpeed -= 0.008f;*/
 
-        if(!noClip) {
-            this.boundingBox.updatePosition(new Vector3f(pos.x, pos.y - Const.COLLISION_GRANULARITY, pos.z));
-            onGround = isColliding();
-            this.boundingBox.updatePosition(pos);
+        //if(!noClip) {
+            //this.boundingBox.updatePosition(new Vector3f(pos.x, pos.y - Const.COLLISION_GRANULARITY, pos.z));
+            //onGround = isColliding();
+            //this.boundingBox.updatePosition(pos);
 
-            posInc.y = ySpeed;
-        }
+            //posInc.y = ySpeed;
+        //}
 
         if(pos.y <= -32f) {
             onGround = true;
@@ -85,14 +63,12 @@ public class Player {
         movePosition(posInc.x, posInc.y, posInc.z);
         world.getCamera().setPosition(pos.x, pos.y + this.eyeHeight, pos.z);
         world.getCamera().setRotation(rotation.x, rotation.y, 0);
-
-        colList.clear();
     }
 
     public void updateInput(MouseInput mouseInput) {
         Window window = Main.getWindow();
-        if(window.isKeyPressed(GLFW.GLFW_KEY_F1))
-            noClip=!noClip;
+        /*if(window.isKeyPressed(GLFW.GLFW_KEY_F1))
+            noClip=!noClip;*/
 
         posInc.set(0, 0, 0);
 
@@ -106,18 +82,18 @@ public class Player {
         else if(window.isKeyPressed(GLFW.GLFW_KEY_D))
             posInc.x = 1;
 
-        if(noClip) {
+        //if(noClip) {
             if(window.isKeyPressed(GLFW.GLFW_KEY_SPACE))
                 posInc.y = 1;
             else if(window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT))
                 posInc.y = -1;
-        } else if(onGround) {
+        /*} else if(onGround) {
             if(window.isKeyPressed(GLFW.GLFW_KEY_SPACE))
                 ySpeed = jumpHeight;
             else if(window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT))
                 eyeHeight = 1.0f;
             else eyeHeight = 1.25f;
-        }
+        }*/
 
         posInc.mul(noClip ? Const.CAMERA_MOVE_SPEED : speed);
 
@@ -127,13 +103,13 @@ public class Player {
         }
     }
 
-    public boolean isColliding() {
+    /*public boolean isColliding() {
         for(Block block : colList) {
             if(this.boundingBox.intersect(block.getBoundingBox()))
                 return true;
         }
         return false;
-    }
+    }*/
 
     public void movePosition(float x, float y, float z) {
         float dx = 0;
@@ -151,11 +127,11 @@ public class Player {
         }
 
         pos.add(new Vector3f(dx, dy, dz));
-        this.boundingBox.updatePosition(pos);
+        //this.boundingBox.updatePosition(pos);
     }
 
     private float getDx(float dx) {
-        if(!noClip) {
+        /*if(!noClip) {
             this.boundingBox.updatePosition(new Vector3f(pos.x + dx, pos.y, pos.z));
             if(isColliding()) {
                 for(float i = 0; i < abs(dx); i += Const.COLLISION_GRANULARITY) {
@@ -166,12 +142,12 @@ public class Player {
                     }
                 }
             }
-        }
+        }*/
         return dx;
     }
 
     private float getDy(float dy) {
-        if(!noClip) {
+        /*if(!noClip) {
             this.boundingBox.updatePosition(new Vector3f(pos.x, pos.y + dy, pos.z));
             if(isColliding()) {
                 for(float i = 0; i < abs(dy); i += Const.COLLISION_GRANULARITY) {
@@ -182,12 +158,12 @@ public class Player {
                     }
                 }
             }
-        }
+        }*/
         return dy;
     }
 
     private float getDz(float dz) {
-        if(!noClip) {
+        /*if(!noClip) {
             this.boundingBox.updatePosition(new Vector3f(pos.x, pos.y, pos.z + dz));
             if(isColliding()) {
                 for(float i = 0; i < abs(dz); i += Const.COLLISION_GRANULARITY) {
@@ -198,7 +174,7 @@ public class Player {
                     }
                 }
             }
-        }
+        }*/
         return dz;
     }
 

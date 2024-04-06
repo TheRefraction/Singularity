@@ -18,10 +18,12 @@ import java.util.Map;
 
 public class EntityRenderer implements IRenderer {
 
+    private final RenderManager renderer;
     private final Shader shader;
     private final Map<Model, List<Entity>> entities;
 
-    public EntityRenderer() throws Exception {
+    public EntityRenderer(RenderManager renderer) throws Exception {
+        this.renderer = renderer;
         entities = new HashMap<>();
         shader = new Shader();
     }

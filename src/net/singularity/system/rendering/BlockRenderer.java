@@ -1,37 +1,42 @@
 package net.singularity.system.rendering;
 
-import net.singularity.entity.Block;
 import net.singularity.Main;
+import net.singularity.block.Block;
 import net.singularity.entity.Model;
 import net.singularity.system.Camera;
 import net.singularity.system.Shader;
 import net.singularity.utils.Transformation;
 import net.singularity.utils.Utils;
-import org.joml.Matrix4f;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class BlockRenderer implements IRenderer {
-
+public class BlockRenderer implements IRenderer{
+    private final RenderManager renderer;
     private final Shader shader;
-    private final List<Block> blocks;
+    private final Map<Vector2i, List<Vector3f>> blocks;
 
-    public BlockRenderer() throws Exception {
-        blocks = new ArrayList<>();
+    public BlockRenderer(RenderManager renderer) throws Exception {
+        this.renderer = renderer;
         shader = new Shader();
+        blocks = new HashMap<>();
     }
 
     @Override
     public void init() throws Exception {
-        shader.createVertexShader(Utils.loadResources("/shaders/vertex.vsh"));
-        shader.createFragmentShader(Utils.loadResources("/shaders/fragment.fsh"));
+        shader.createVertexShader(Utils.loadResources("/shaders/blockVertex.vsh"));
+        shader.createFragmentShader(Utils.loadResources("/shaders/blockFragment.fsh"));
         shader.link();
         shader.createUniform("textureSampler");
+        shader.createUniform("face");
         shader.createUniform("transformationMatrix");
         shader.createUniform("projectionMatrix");
         shader.createUniform("viewMatrix");
@@ -42,20 +47,24 @@ public class BlockRenderer implements IRenderer {
         shader.bind();
         shader.setUniform("projectionMatrix", Main.getWindow().updateProjectionMatrix());
 
-        for(Block block : blocks) {
-            for(int i = 0; i < 6; i++) {
-                Model model = block.getModels()[i];
-                if(!block.getRenderFaces()[i])
-                    continue;
-                bind(model);
-                prepare(block, camera);
+        for(Vector2i key : blocks.keySet()) {
+            float[] textureCoords = Block.blocks[key.x].getFaceTexCoords(key.y);
+            Model model = renderer.getLoader().updateModelTexCoords(renderer.getLoader().getBlockModels(key.y), textureCoords);
+            bind(model);
+            List<Vector3f> posList = blocks.get(key);
+            for(Vector3f pos : posList) {
+                prepare(new Vector4f(key.y, pos.x, pos.y, pos.z), camera);
+                //GL11.glEnable(GL11.GL_BLEND);
+                //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-                unbind();
+                //GL11.glDisable(GL11.GL_BLEND);
             }
+            unbind();
         }
         blocks.clear();
+
         shader.unbind();
     }
 
@@ -66,7 +75,7 @@ public class BlockRenderer implements IRenderer {
         GL20.glEnableVertexAttribArray(1);
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getId());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getLoader().getBlockTexture().getId());
     }
 
     @Override
@@ -77,12 +86,11 @@ public class BlockRenderer implements IRenderer {
     }
 
     @Override
-    public void prepare(Object bl, Camera camera) {
-        Block block = (Block) bl;
-        Matrix4f matrix = new Matrix4f();
-        matrix.identity().translate(block.getPos());
+    public void prepare(Object o, Camera camera) {
+        Vector4f vect = (Vector4f) o;
         shader.setUniform("textureSampler", 0);
-        shader.setUniform("transformationMatrix", matrix);
+        shader.setUniform("face", vect.x);
+        shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(new Vector3f(vect.y, vect.z, vect.w)));
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
     }
 
@@ -91,7 +99,7 @@ public class BlockRenderer implements IRenderer {
         shader.cleanup();
     }
 
-    public List<Block> getBlocks() {
+    public Map<Vector2i, List<Vector3f>> getBlocks() {
         return blocks;
     }
 }
