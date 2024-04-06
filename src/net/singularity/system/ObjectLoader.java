@@ -1,7 +1,7 @@
 package net.singularity.system;
 
 import net.singularity.entity.Model;
-import net.singularity.entity.Texture;
+import net.singularity.texture.Texture;
 import net.singularity.utils.SException;
 import net.singularity.utils.Utils;
 import org.lwjgl.opengl.GL11;

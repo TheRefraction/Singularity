@@ -15,6 +15,7 @@ public class Window {
     private final String title;
 
     private int width, height;
+    private int widthCenter, heightCenter;
     private long window;
 
     private boolean resize, vsync;
@@ -93,9 +94,16 @@ public class Window {
         GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
+
+        widthCenter = width / 2;
+        heightCenter = height / 2;
     }
 
     public void update() {
+        if(this.isResize()) {
+            this.widthCenter = this.width / 2;
+            this.heightCenter = this.height / 2;
+        }
         GLFW.glfwSwapBuffers(window);
         GLFW.glfwPollEvents();
     }
@@ -142,6 +150,14 @@ public class Window {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getWidthCenter() {
+        return widthCenter;
+    }
+
+    public int getHeightCenter() {
+        return heightCenter;
     }
 
     public long getWindowHandle() {

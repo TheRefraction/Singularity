@@ -10,10 +10,11 @@ public class Transformation {
 
     public static Matrix4f createTransformationMatrix(Entity entity) {
         Matrix4f matrix = new Matrix4f();
-        matrix.identity().translate(entity.getPos())
-                .rotateX(Math.toRadians(entity.getRotation().x))
-                .rotateY(Math.toRadians(entity.getRotation().y))
-                .rotateZ(Math.toRadians(entity.getRotation().z)).scale(entity.getScale());
+        matrix.identity().translate(entity.pos)
+                .rotateX(Math.toRadians(entity.rot.x))
+                .rotateY(Math.toRadians(entity.rot.y))
+                .rotateZ(Math.toRadians(entity.rot.z))
+                .scale(entity.scale);
 
         return matrix;
     }
@@ -26,8 +27,8 @@ public class Transformation {
     }
 
     public static Matrix4f getViewMatrix(Camera camera) {
-        Vector3f pos = camera.getPosition();
-        Vector3f rot = camera.getRotation();
+        Vector3f pos = camera.getPos();
+        Vector3f rot = camera.getRot();
         Matrix4f matrix = new Matrix4f();
 
         matrix.identity()

@@ -1,7 +1,7 @@
 package net.singularity.utils;
 
 public class Const {
-    public static final String TITLE = "Singularity";
+    public static final String TITLE = "sg-04062024-b";
     public static final long NANOSECOND = 1000000000L;
 
     public static final float FOV = (float) Math.toRadians(60);
@@ -11,11 +11,11 @@ public class Const {
 
     public static final float MOUSE_SENSITIVITY = 0.2f;
     public static final float CAMERA_MOVE_SPEED = 0.4f;
-    public static final float COLLISION_GRANULARITY = 0.01f;
+    public static final float COLLISION_GRANULARITY = 0f;
 
-    public static final int CHUNK_WIDTH = 16;
-    public static final int CHUNK_HEIGHT = 16;
-    public static final int CHUNK_DEPTH = 16;
+    public static final int CHUNK_WIDTH = 32;
+    public static final int CHUNK_HEIGHT = 32;
+    public static final int CHUNK_DEPTH = 32;
     public static final int MAX_BLOCKS_PER_CHUNK = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH;
 
     public static final int REGION_BASE_SIZE = 256;

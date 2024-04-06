@@ -2,6 +2,7 @@ package net.singularity.world;
 
 import net.singularity.block.Block;
 import net.singularity.entity.Entity;
+import net.singularity.physics.AABB;
 import net.singularity.entity.Player;
 import net.singularity.system.Camera;
 import net.singularity.system.ObjectLoader;
@@ -27,7 +28,7 @@ public class World {
     public World(ObjectLoader loader, Camera camera) {
         this.loader = loader;
         this.camera = camera;
-        this.player = new Player(this, new Vector3f(-1,0,-1), new Vector3f(0,0,0));
+        this.player = new Player(this, new Vector3f(8,48,8), new Vector3f(0,0,0));
         this.blocks = genTest();
         this.chunk = new Chunk(this, new Vector3i(0,0,0), new Vector3i(Const.CHUNK_WIDTH, Const.CHUNK_DEPTH, Const.CHUNK_HEIGHT));
     }
@@ -38,7 +39,7 @@ public class World {
 
     public void update(float interval, RenderManager renderer) {
         tick();
-        player.update(interval);
+        player.update();
 
         chunk.render(renderer);
 
@@ -47,6 +48,22 @@ public class World {
     }
 
     public void cleanup() {
+    }
+
+    public void tick() {
+        this.unprocessed += 16*16*16;
+        int ticks = this.unprocessed / 400;
+        this.unprocessed -= ticks * 400;
+
+        for(int i = 0; i < ticks; ++i) {
+            int x = this.random.nextInt(16);
+            int y = this.random.nextInt(16);
+            int z = this.random.nextInt(16);
+            Block block = Block.blocks[this.getTile(x, y, z)];
+            if (block != null) {
+                block.tick(this, x, y, z, this.random);
+            }
+        }
     }
 
     public byte[] genTest() {
@@ -59,7 +76,7 @@ public class World {
             for(int y = 0; y < d; ++y) {
                 for(int z = 0; z < h; ++z) {
                     int i = (y * h + z) * w + x;
-                    int id = rand.nextInt(4);
+                    int id = rand.nextInt(3);
                     blocks[i] = (byte)id;
                 }
             }
@@ -86,25 +103,57 @@ public class World {
         return x >= 0 && y >= 0 && z >= 0 && x < w && y < d && z < h ? this.blocks[(y * h + z) * w + x] : 0;
     }
 
-    public boolean isSolidTile(int x, int y, int z) {
-        Block block = Block.blocks[this.getTile(x, y, z)];
-        return block != null && block.isSolid();
-    }
+    public ArrayList<AABB> getCubes(AABB aABB) {
+        ArrayList<AABB> aabbList = new ArrayList<>();
+        int x0 = (int)aABB.x0;
+        int x1 = (int)(aABB.x1 + 1.0f);
+        int y0 = (int)aABB.y0;
+        int y1 = (int)(aABB.y1 + 1.0f);
+        int z0 = (int)aABB.z0;
+        int z1 = (int)(aABB.z1 + 1.0f);
+        if (x0 < 0) {
+            x0 = 0;
+        }
 
-    public void tick() {
-        this.unprocessed += 16*16*16;
-        int ticks = this.unprocessed / 400;
-        this.unprocessed -= ticks * 400;
+        if (y0 < 0) {
+            y0 = 0;
+        }
 
-        for(int i = 0; i < ticks; ++i) {
-            int x = this.random.nextInt(16);
-            int y = this.random.nextInt(16);
-            int z = this.random.nextInt(16);
-            Block block = Block.blocks[this.getTile(x, y, z)];
-            if (block != null) {
-                block.tick(this, x, y, z, this.random);
+        if (z0 < 0) {
+            z0 = 0;
+        }
+
+        if (x1 > Const.WORLD_WIDTH) {
+            x1 = Const.WORLD_WIDTH;
+        }
+
+        if (y1 > Const.WORLD_DEPTH) {
+            y1 = Const.WORLD_DEPTH;
+        }
+
+        if (z1 > Const.WORLD_HEIGHT) {
+            z1 = Const.WORLD_HEIGHT;
+        }
+
+        for(int x = x0; x < x1; ++x) {
+            for(int y = y0; y < y1; ++y) {
+                for(int z = z0; z < z1; ++z) {
+                    Block block = Block.blocks[this.getTile(x, y, z)];
+                    if (block != null) {
+                        AABB aabb = block.getAABB(x, y, z);
+                        if (aabb != null) {
+                            aabbList.add(aabb);
+                        }
+                    }
+                }
             }
         }
 
+        return aabbList;
+    }
+
+    public boolean isSolidTile(int x, int y, int z) {
+        Block block = Block.blocks[this.getTile(x, y, z)];
+        return block != null && block.isSolid();
     }
 }

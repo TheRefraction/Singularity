@@ -1,7 +1,8 @@
 package net.singularity.physics;
 
+import net.singularity.utils.Const;
+
 public class AABB {
-    private float epsilon = 0.0F;
     public float x0;
     public float y0;
     public float z0;
@@ -67,14 +68,14 @@ public class AABB {
             if (c.z1 > this.z0 && c.z0 < this.z1) {
                 float max;
                 if (xa > 0.0F && c.x1 <= this.x0) {
-                    max = this.x0 - c.x1 - this.epsilon;
+                    max = this.x0 - c.x1 - Const.COLLISION_GRANULARITY;
                     if (max < xa) {
                         xa = max;
                     }
                 }
 
                 if (xa < 0.0F && c.x0 >= this.x1) {
-                    max = this.x1 - c.x0 + this.epsilon;
+                    max = this.x1 - c.x0 + Const.COLLISION_GRANULARITY;
                     if (max > xa) {
                         xa = max;
                     }
@@ -94,14 +95,14 @@ public class AABB {
             if (c.z1 > this.z0 && c.z0 < this.z1) {
                 float max;
                 if (ya > 0.0F && c.y1 <= this.y0) {
-                    max = this.y0 - c.y1 - this.epsilon;
+                    max = this.y0 - c.y1 - Const.COLLISION_GRANULARITY;
                     if (max < ya) {
                         ya = max;
                     }
                 }
 
                 if (ya < 0.0F && c.y0 >= this.y1) {
-                    max = this.y1 - c.y0 + this.epsilon;
+                    max = this.y1 - c.y0 + Const.COLLISION_GRANULARITY;
                     if (max > ya) {
                         ya = max;
                     }
@@ -121,14 +122,14 @@ public class AABB {
             if (c.y1 > this.y0 && c.y0 < this.y1) {
                 float max;
                 if (za > 0.0F && c.z1 <= this.z0) {
-                    max = this.z0 - c.z1 - this.epsilon;
+                    max = this.z0 - c.z1 - Const.COLLISION_GRANULARITY;
                     if (max < za) {
                         za = max;
                     }
                 }
 
                 if (za < 0.0F && c.z0 >= this.z1) {
-                    max = this.z1 - c.z0 + this.epsilon;
+                    max = this.z1 - c.z0 + Const.COLLISION_GRANULARITY;
                     if (max > za) {
                         za = max;
                     }

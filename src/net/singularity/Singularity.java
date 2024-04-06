@@ -30,12 +30,12 @@ public class Singularity implements ILogic {
 
     @Override
     public void input(MouseInput mouseInput) {
-        world.getPlayer().updateInput(mouseInput);
+        world.getPlayer().updateMouseInput(mouseInput);
     }
 
     @Override
     public void update(float interval) {
-        camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
+        //camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
         world.update(interval, renderer);
     }
 

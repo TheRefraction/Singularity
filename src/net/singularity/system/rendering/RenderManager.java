@@ -46,6 +46,8 @@ public class RenderManager {
     }
 
     public void processEntity(Entity entity) {
+        if(entity.getModel() == null) return;
+
         List<Entity> entityList = entityRenderer.getEntities().get(entity.getModel());
         if(entityList != null)
             entityList.add(entity);

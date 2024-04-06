@@ -7,20 +7,17 @@ import org.lwjgl.glfw.GLFW;
 
 public class MouseInput {
 
-    private final Vector2d previousPos, currentPos;
+    private final Vector2d currentPos;
     private final Vector2f displVec;
 
-    private boolean inWindow = false, leftButtonPress = false, rightButtonPress = false;
+    private boolean inWindow = false, leftButtonPress = false, rightButtonPress = false, mouseLocked = false;
 
     public MouseInput() {
-        this.previousPos = new Vector2d(-1, -1);
         this.currentPos = new Vector2d(0, 0);
         this.displVec = new Vector2f();
     }
 
     public void init() {
-        //GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
-
         GLFW.glfwSetCursorPosCallback(Main.getWindow().getWindowHandle(), (window, xpos, ypos) -> {
             currentPos.x = xpos;
             currentPos.y = ypos;
@@ -37,21 +34,29 @@ public class MouseInput {
     }
 
     public void input() {
-        displVec.x = 0;
-        displVec.y = 0;
-        if(previousPos.x > 0 && previousPos.y > 0 && inWindow) {
-            double x = currentPos.x - previousPos.x;
-            double y = currentPos.y - previousPos.y;
-            boolean rotateX = x != 0;
-            boolean rotateY = y != 0;
+        if(!mouseLocked) {
+            if(leftButtonPress) {
+                GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+                mouseLocked = true;
+            } else GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        } else {
+            displVec.x = 0;
+            displVec.y = 0;
 
-            if(rotateX)
-                displVec.y = (float) x;
-            if(rotateY)
-                displVec.x = (float) y;
+            if(isInWindow()) {
+                double x = currentPos.x - Main.getWindow().getWidthCenter();
+                double y = currentPos.y - Main.getWindow().getHeightCenter();
+                boolean rotateX = x != 0;
+                boolean rotateY = y != 0;
+
+                if (rotateX)
+                    displVec.y = (float) x;
+                if (rotateY)
+                    displVec.x = (float) y;
+            }
+
+            GLFW.glfwSetCursorPos(Main.getWindow().getWindowHandle(), Main.getWindow().getWidthCenter(), Main.getWindow().getHeightCenter());
         }
-        previousPos.x = currentPos.x;
-        previousPos.y = currentPos.y;
     }
 
     public Vector2f getDisplVec() {

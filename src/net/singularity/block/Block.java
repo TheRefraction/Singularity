@@ -14,6 +14,7 @@ public class Block {
     public static final Block grass = new GrassBlock(2);
     public static final Block dirt = new Block(3, 2);
     public static final Block wood = new Block(4, 4);
+    public static final Block glass = new NonSolidBlock(5, 39);
 
     public int tex;
     public final int id;

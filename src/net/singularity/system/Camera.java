@@ -4,36 +4,36 @@ import org.joml.Vector3f;
 
 public class Camera {
 
-    private Vector3f position, rotation;
-    private FrustumCullingFilter frustumFilter;
+    private Vector3f pos, rot;
+    //private FrustumCullingFilter frustumFilter;
 
     public Camera() {
-        this.position = new Vector3f(0, 0, 0);
-        this.rotation = new Vector3f(0, 0, 0);
-        this.frustumFilter = new FrustumCullingFilter();
+        this.pos = new Vector3f(0, 0, 0);
+        this.rot = new Vector3f(0, 0, 0);
+        //this.frustumFilter = new FrustumCullingFilter();
     }
 
     public void setPosition(float x, float y, float z) {
-        this.position.x = x;
-        this.position.y = y;
-        this.position.z = z;
+        this.pos.x = x;
+        this.pos.y = y;
+        this.pos.z = z;
     }
 
     public void setRotation(float x, float y, float z) {
-        this.rotation.x = x;
-        this.rotation.y = y;
-        this.rotation.z = z;
+        this.rot.x = x;
+        this.rot.y = y;
+        this.rot.z = z;
     }
 
-    public Vector3f getPosition() {
-        return position;
+    public Vector3f getPos() {
+        return pos;
     }
 
-    public Vector3f getRotation() {
-        return rotation;
+    public Vector3f getRot() {
+        return rot;
     }
 
-    public FrustumCullingFilter getFrustumFilter() {
+    /*public FrustumCullingFilter getFrustumFilter() {
         return frustumFilter;
-    }
+    }*/
 }

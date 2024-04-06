@@ -1,5 +1,7 @@
 package net.singularity.entity;
 
+import net.singularity.texture.Texture;
+
 public class Model {
 
     private int id;

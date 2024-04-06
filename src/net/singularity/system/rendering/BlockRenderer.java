@@ -54,8 +54,10 @@ public class BlockRenderer implements IRenderer{
             List<Vector3f> posList = blocks.get(key);
             for(Vector3f pos : posList) {
                 prepare(new Vector4f(key.y, pos.x, pos.y, pos.z), camera);
-                //GL11.glEnable(GL11.GL_BLEND);
-                //GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                /*if(!Block.blocks[key.x].blocksLight()) {
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                }*/
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);

@@ -1,4 +1,4 @@
-package net.singularity.entity;
+package net.singularity.texture;
 
 public class Texture {
 
