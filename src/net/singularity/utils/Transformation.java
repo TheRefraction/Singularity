@@ -19,9 +19,9 @@ public class Transformation {
         return matrix;
     }
 
-    public static Matrix4f createTransformationMatrix(Vector3f position) {
+    public static Matrix4f createTransformationMatrix(float x, float y, float z) {
         Matrix4f matrix = new Matrix4f();
-        matrix.identity().translate(position);
+        matrix.identity().translate(x, y, z);
 
         return matrix;
     }

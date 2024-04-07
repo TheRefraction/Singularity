@@ -24,6 +24,15 @@ public class Entity {
     public boolean removed = false;
     protected float heightOffset = 0f;
 
+    public Entity(World world, Model model) {
+        this.world = world;
+        this.model = model;
+        this.resetPos();
+        this.rot = new Vector3f(0,0,0);
+        this.oldPos = pos;
+        this.incPos = new Vector3f(0,0,0);
+    }
+
     public Entity(World world, Model model, Vector3f pos, Vector3f rot) {
         this.world = world;
         this.model = model;
@@ -31,6 +40,13 @@ public class Entity {
         this.rot = rot;
         this.oldPos = pos;
         this.incPos = new Vector3f(0,0,0);
+    }
+
+    public void resetPos() {
+        float x = (float)Math.random() * this.world.width;
+        float y = (float)(this.world.depth + 20);
+        float z = (float)Math.random() * this.world.height;
+        this.setPos(x, y, z);
     }
 
     public void update() {
@@ -102,6 +118,10 @@ public class Entity {
             this.incPos.x += x * cos - z * sin;
             this.incPos.z += z * cos + x * sin;
         }
+    }
+
+    public float getDistanceFrom(Vector3f pos) {
+        return this.pos.distance(pos);
     }
 
     public Model getModel() {

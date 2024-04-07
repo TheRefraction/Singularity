@@ -18,7 +18,7 @@ public class FrustumCullingFilter {
         frustumInter.set(frustumMatrix);
     }
 
-    public boolean insideFrustum(AABB boundingBox) {
-        return true;//frustumInter.testAab(boundingBox.getMinPos(), boundingBox.getMaxPos());
+    public boolean insideFrustum(AABB bb) {
+        return frustumInter.testAab(bb.x0, bb.y0, bb.z0, bb.x1, bb.y1, bb.z1);
     }
 }

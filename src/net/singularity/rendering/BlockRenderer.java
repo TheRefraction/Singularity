@@ -1,12 +1,15 @@
-package net.singularity.system.rendering;
+package net.singularity.rendering;
 
 import net.singularity.Main;
-import net.singularity.entity.Entity;
+import net.singularity.block.Block;
+import net.singularity.block.EBlockType;
 import net.singularity.entity.Model;
 import net.singularity.system.Camera;
 import net.singularity.system.Shader;
 import net.singularity.utils.Transformation;
 import net.singularity.utils.Utils;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -16,24 +19,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EntityRenderer implements IRenderer {
-
+public class BlockRenderer implements IRenderer{
     private final RenderManager renderer;
     private final Shader shader;
-    private final Map<Model, List<Entity>> entities;
+    private final Map<Vector3i, List<Vector3f>> blocks;
 
-    public EntityRenderer(RenderManager renderer) throws Exception {
+    public BlockRenderer(RenderManager renderer) throws Exception {
         this.renderer = renderer;
-        entities = new HashMap<>();
         shader = new Shader();
+        blocks = new HashMap<>();
     }
 
     @Override
     public void init() throws Exception {
-        shader.createVertexShader(Utils.loadResources("/shaders/vertex.vsh"));
-        shader.createFragmentShader(Utils.loadResources("/shaders/fragment.fsh"));
+        shader.createVertexShader(Utils.loadResources("/shaders/blockVertex.vsh"));
+        shader.createFragmentShader(Utils.loadResources("/shaders/blockFragment.fsh"));
         shader.link();
         shader.createUniform("textureSampler");
+        shader.createUniform("face");
+        shader.createUniform("layer");
         shader.createUniform("transformationMatrix");
         shader.createUniform("projectionMatrix");
         shader.createUniform("viewMatrix");
@@ -44,18 +48,26 @@ public class EntityRenderer implements IRenderer {
         shader.bind();
         shader.setUniform("projectionMatrix", Main.getWindow().updateProjectionMatrix());
 
-        for(Model model : entities.keySet()) {
+        for(Vector3i key : blocks.keySet()) {
+            Block block = Block.blocks[key.x];
+            int face = key.y;
+            EBlockType blockType = block.getBlockType();
+            float[] textureCoords = block.getFaceTexCoords(face);
+
+            Model model = renderer.getLoader().updateModelTexCoords(renderer.getLoader().getBlockModels(blockType, face), textureCoords);
             bind(model);
-            List<Entity> entityList = entities.get(model);
-            for(Entity entity : entityList) {
-                prepare(entity, camera);
+            List<Vector3f> posList = blocks.get(key);
+
+            for(Vector3f pos : posList) {
+                prepare(camera, pos.x, pos.y, pos.z, face, key.z);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-                GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+                GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             }
             unbind();
         }
-        entities.clear();
+        blocks.clear();
+
         shader.unbind();
     }
 
@@ -66,7 +78,7 @@ public class EntityRenderer implements IRenderer {
         GL20.glEnableVertexAttribArray(1);
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getId());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getLoader().getBlockTexture().getId());
     }
 
     @Override
@@ -77,9 +89,14 @@ public class EntityRenderer implements IRenderer {
     }
 
     @Override
-    public void prepare(Object entity, Camera camera) {
+    public void prepare(Object o, Camera camera) {
+    }
+
+    public void prepare(Camera camera, float x, float y, float z, int face, int layer) {
         shader.setUniform("textureSampler", 0);
-        shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix((Entity) entity));
+        shader.setUniform("face", face);
+        shader.setUniform("layer", layer);
+        shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(x, y, z));
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
     }
 
@@ -88,7 +105,7 @@ public class EntityRenderer implements IRenderer {
         shader.cleanup();
     }
 
-    public Map<Model, List<Entity>> getEntities() {
-        return entities;
+    public Map<Vector3i, List<Vector3f>> getBlocks() {
+        return blocks;
     }
 }

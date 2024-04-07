@@ -1,6 +1,7 @@
 package net.singularity.block;
 
 import net.singularity.physics.AABB;
+import net.singularity.utils.Const;
 import net.singularity.world.World;
 
 import java.util.ArrayList;
@@ -29,25 +30,25 @@ public class Block {
         this.tex = tex;
     }
 
-    public List<Integer> getFacesToRender(World world, int x, int y, int z) {
+    public List<Integer> getFacesToRender(World world, int x, int y, int z, int layer) {
         List<Integer> facesToRender = new ArrayList<>();
 
-        if(this.shouldRenderFace(world, x, y - 1, z)) {
+        if(this.shouldRenderFace(world, x, y - 1, z, layer)) {
             facesToRender.add(0);
         }
-        if(this.shouldRenderFace(world, x, y + 1, z)) {
+        if(this.shouldRenderFace(world, x, y + 1, z, layer) || this.getBlockType() == EBlockType.SLAB) {
             facesToRender.add(1);
         }
-        if(this.shouldRenderFace(world, x, y, z - 1)) {
+        if(this.shouldRenderFace(world, x, y, z - 1, layer)) {
             facesToRender.add(2);
         }
-        if(this.shouldRenderFace(world, x, y, z + 1)) {
+        if(this.shouldRenderFace(world, x, y, z + 1, layer)) {
             facesToRender.add(3);
         }
-        if(this.shouldRenderFace(world, x - 1, y, z)) {
+        if(this.shouldRenderFace(world, x - 1, y, z, layer)) {
             facesToRender.add(4);
         }
-        if(this.shouldRenderFace(world, x + 1, y, z)) {
+        if(this.shouldRenderFace(world, x + 1, y, z, layer)) {
             facesToRender.add(5);
         }
 
@@ -58,9 +59,13 @@ public class Block {
         int tex = getTexture(face);
 
         float u0 = (float) (tex % 16) / 16.0f;
-        float u1 = u0 + 0.0624375f;
+        float u1 = u0 + Const.TEX_UV_STEP;
         float v0 = (float) (tex / 16) / 16.0f;
-        float v1 = v0 + 0.0624375f;
+        float v1 = v0 + Const.TEX_UV_STEP;
+
+        if(this.getBlockType() == EBlockType.SLAB && face != 0 && face != 1) {
+            v0 += Const.TEX_UV_STEP / 2f;
+        }
 
         float[] textureCoords;
 
@@ -121,8 +126,8 @@ public class Block {
 
     }
 
-    protected boolean shouldRenderFace(World world, int x, int y, int z) {
-        return !world.isSolidTile(x, y, z);
+    protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
+        return !(world.isSolidTile(x, y, z) && Block.blocks[world.getTile(x, y, z)].getBlockType() == EBlockType.NORMAL) && world.isLit(x, y, z) ^ layer == 1;
     }
 
     protected int getTexture(int face) {
@@ -131,6 +136,10 @@ public class Block {
 
     public AABB getAABB(int x, int y, int z) {
         return new AABB((float) x, (float) y, (float) z, (float) (x + 1), (float) (y + 1), (float) (z + 1));
+    }
+
+    public EBlockType getBlockType() {
+        return EBlockType.NORMAL;
     }
 
     public boolean isSolid() {

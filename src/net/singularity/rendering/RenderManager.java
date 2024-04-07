@@ -1,4 +1,4 @@
-package net.singularity.system.rendering;
+package net.singularity.rendering;
 
 import net.singularity.Main;
 import net.singularity.block.Block;
@@ -7,8 +7,8 @@ import net.singularity.system.Camera;
 import net.singularity.system.ObjectLoader;
 import net.singularity.system.Window;
 import net.singularity.world.World;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -58,10 +58,10 @@ public class RenderManager {
         }
     }
 
-    public void processBlock(World world, int tileId, int x, int y, int z) {
-        List<Integer> facesToRender = Block.blocks[tileId].getFacesToRender(world, x, y, z);
+    public void processBlock(World world, int tileId, int x, int y, int z, int layer) {
+        List<Integer> facesToRender = Block.blocks[tileId].getFacesToRender(world, x, y, z, layer);
         for(int face : facesToRender) {
-            Vector2i key = new Vector2i(tileId, face);
+            Vector3i key = new Vector3i(tileId, face, layer);
             List<Vector3f> blockList = blockRenderer.getBlocks().get(key);
             if (blockList != null)
                 blockList.add(new Vector3f(x, y, z));

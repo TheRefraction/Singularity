@@ -5,12 +5,12 @@ import org.joml.Vector3f;
 public class Camera {
 
     private Vector3f pos, rot;
-    //private FrustumCullingFilter frustumFilter;
+    private FrustumCullingFilter frustumFilter;
 
     public Camera() {
         this.pos = new Vector3f(0, 0, 0);
         this.rot = new Vector3f(0, 0, 0);
-        //this.frustumFilter = new FrustumCullingFilter();
+        this.frustumFilter = new FrustumCullingFilter();
     }
 
     public void setPosition(float x, float y, float z) {
@@ -33,7 +33,7 @@ public class Camera {
         return rot;
     }
 
-    /*public FrustumCullingFilter getFrustumFilter() {
+    public FrustumCullingFilter getFrustumFilter() {
         return frustumFilter;
-    }*/
+    }
 }

@@ -1,4 +1,4 @@
-package net.singularity.system.rendering;
+package net.singularity.rendering;
 
 import net.singularity.entity.Model;
 import net.singularity.system.Camera;

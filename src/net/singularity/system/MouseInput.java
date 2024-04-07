@@ -36,26 +36,24 @@ public class MouseInput {
     public void input() {
         if(!mouseLocked) {
             if(leftButtonPress) {
-                GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+                GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
                 mouseLocked = true;
             } else GLFW.glfwSetInputMode(Main.getWindow().getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         } else {
             displVec.x = 0;
             displVec.y = 0;
 
-            if(isInWindow()) {
-                double x = currentPos.x - Main.getWindow().getWidthCenter();
-                double y = currentPos.y - Main.getWindow().getHeightCenter();
-                boolean rotateX = x != 0;
-                boolean rotateY = y != 0;
+            double x = currentPos.x - Main.getWindow().getWidthCenter();
+            double y = currentPos.y - Main.getWindow().getHeightCenter();
+            boolean rotateX = x != 0;
+            boolean rotateY = y != 0;
 
-                if (rotateX)
-                    displVec.y = (float) x;
-                if (rotateY)
-                    displVec.x = (float) y;
-            }
+            if (rotateX)
+                displVec.y = (float) x;
+            if (rotateY)
+                displVec.x = (float) y;
 
-            GLFW.glfwSetCursorPos(Main.getWindow().getWindowHandle(), Main.getWindow().getWidthCenter(), Main.getWindow().getHeightCenter());
+            //GLFW.glfwSetCursorPos(Main.getWindow().getWindowHandle(), Main.getWindow().getWidthCenter(), Main.getWindow().getHeightCenter());
         }
     }
 

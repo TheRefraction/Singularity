@@ -5,7 +5,8 @@ in vec2 fragTextureCoords;
 out vec4 fragColor;
 
 uniform sampler2D textureSampler;
-uniform float face;
+uniform int face;
+uniform int layer;
 
 void main() {
     fragColor = texture(textureSampler, fragTextureCoords);
@@ -13,6 +14,9 @@ void main() {
     if(face == 2 || face == 3 || face == 4 || face == 5) {
         light = 0.8f;
     } else if(face == 0) {
+        light = 0.6f;
+    }
+    if(layer == 1) {
         light = 0.6f;
     }
     fragColor = light * fragColor;

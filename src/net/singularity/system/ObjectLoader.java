@@ -1,5 +1,6 @@
 package net.singularity.system;
 
+import net.singularity.block.EBlockType;
 import net.singularity.entity.Model;
 import net.singularity.texture.Texture;
 import net.singularity.utils.SException;
@@ -68,7 +69,7 @@ public class ObjectLoader {
     }
 
     public void initBlockModels() {
-        blockModels = new Model[6];
+        blockModels = new Model[12];
         float[] vertices;
         float[] textureCoords = {
                 0, 1,
@@ -81,6 +82,8 @@ public class ObjectLoader {
                 0, 1, 3,
                 3, 1, 2
         };
+
+        // NORMAL BLOCK
 
         vertices = new float[] {
                 0, 0, 1,
@@ -135,10 +138,68 @@ public class ObjectLoader {
         };
 
         blockModels[5] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        // SLAB
+
+        vertices = new float[] {
+                0, 0, 1,
+                0, 0, 0,
+                1, 0, 0,
+                1, 0, 1
+        };
+
+        blockModels[6] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                1, 0.5f, 1,
+                1, 0.5f, 0,
+                0, 0.5f, 0,
+                0, 0.5f, 1
+        };
+
+        blockModels[7] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 0.5f, 0,
+                1, 0.5f, 0,
+                1, 0, 0,
+                0, 0, 0
+        };
+
+        blockModels[8] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 0.5f, 1,
+                0, 0, 1,
+                1, 0, 1,
+                1, 0.5f, 1
+        };
+
+        blockModels[9] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                0, 0.5f, 1,
+                0, 0.5f, 0,
+                0, 0, 0,
+                0, 0, 1
+        };
+
+        blockModels[10] = this.loadModel(vertices, textureCoords, tileIndices);
+
+        vertices = new float[] {
+                1, 0, 1,
+                1, 0, 0,
+                1, 0.5f, 0,
+                1, 0.5f, 1
+        };
+
+        blockModels[11] = this.loadModel(vertices, textureCoords, tileIndices);
     }
 
-    public Model getBlockModels(int face) {
-        return this.blockModels[face];
+    public Model getBlockModels(EBlockType type, int face) {
+        int offset = 0;
+        if(type == EBlockType.SLAB) offset = 6;
+        return this.blockModels[offset + face];
     }
 
     public void loadBlockTexture() throws Exception {

@@ -10,8 +10,8 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Player extends Entity {
-    public Player(World world, Vector3f pos, Vector3f rot) {
-        super(world, null, pos, rot);
+    public Player(World world) {
+        super(world, null);
         this.heightOffset = 1.6f;
     }
 
@@ -28,6 +28,9 @@ public class Player extends Entity {
         float dz = 0f;
 
         Window window = Main.getWindow();
+
+        if(window.isKeyPressed(GLFW.GLFW_KEY_R))
+            this.resetPos();
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_Z))
             --dz;

@@ -66,7 +66,7 @@ public class Engine {
                 if(frameCounter >= Const.NANOSECOND) {
                     setFps(frames);
                     currentFrameTime = 1.0f / fps;
-                    windowManager.setTitle(Const.TITLE+"("+getFps()+")");
+                    windowManager.setTitle(Const.TITLE+"("+getFps()+" FPS)");
                     frames = 0;
                     frameCounter = 0;
                 }
