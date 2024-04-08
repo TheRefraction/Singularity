@@ -1,5 +1,8 @@
 package net.singularity.utils;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.InputStream;
@@ -31,9 +34,11 @@ public class Utils {
         return result;
     }
 
-    public static float sign(float x) {
-        return (x < 0) ? -1 : 1;
+    public static void changeDataInAttribList(int vbo, int attribNo, int vertexCount, float[] data) {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+        FloatBuffer buffer = Utils.storeDataInFloatBuffer(data);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        GL20.glVertexAttribPointer(attribNo, vertexCount, GL11.GL_FLOAT, false, 0, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
-
-
 }

@@ -1,58 +1,80 @@
 package net.singularity;
 
-import net.singularity.system.*;
-import net.singularity.rendering.RenderManager;
+import net.singularity.graphics.Textures;
+import net.singularity.rendering.Renderer;
 import net.singularity.rendering.WorldRenderer;
+import net.singularity.system.Camera;
+import net.singularity.system.Input;
+import net.singularity.system.Window;
+import net.singularity.utils.Const;
 import net.singularity.utils.Transformation;
 import net.singularity.world.World;
+import org.lwjgl.glfw.GLFW;
 
-public class Singularity implements ILogic {
-    private final RenderManager renderer;
-    private final ObjectLoader loader;
-    private final Window window;
-    private final World world;
-    private final WorldRenderer worldRenderer;
-    private final Camera camera;
+public class Singularity implements Runnable {
+    public Thread game;
+    public Window window;
+    public Renderer renderer;
+    public Camera camera;
+    public static World world;
+    private WorldRenderer worldRenderer;
+    public static Textures textures;
 
-    public Singularity() {
-        loader = new ObjectLoader();
-        renderer = new RenderManager(loader);
-        window = Main.getWindow();
-        camera = new Camera();
-        world = new World(loader, camera, 32, 16, 32);
-        worldRenderer = new WorldRenderer(world);
+    public void start() {
+        game = new Thread(this, "game");
+        game.start();
+
+        //init();
     }
 
-    @Override
-    public void init() throws Exception {
-        loader.loadBlockTexture();
-        loader.initBlockModels();
-        renderer.init();
+    public void init()  {
+        this.window = new Window(Const.TITLE, 800, 600);
+        this.window.setClearColor(0.2f, 0.2f, 0.8f);
+        this.window.init();
+
+        textures = new Textures();
+        this.renderer = new Renderer(this.window, textures);
+        try {
+            this.renderer.init();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        this.camera = new Camera();
+
+        world = new World(this.camera, 32,32,32);
+        this.worldRenderer = new WorldRenderer(world);
+
         world.init();
     }
 
-    @Override
-    public void input(MouseInput mouseInput) {
-        world.getPlayer().updateMouseInput(mouseInput);
+    public void run() {
+        init();
+        while(!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+            update();
+            render();
+            if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) window.setFullscreen(!window.isFullscreen());
+            if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) window.mouseState(true);
+        }
+        close();
     }
 
-    @Override
-    public void update(float interval) {
-        world.update(renderer);
+    private void update() {
+        window.update();
         camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
+        world.update(renderer);
+    }
+
+    private void render() {
         worldRenderer.render(renderer, 0);
         worldRenderer.render(renderer, 1);
-    }
 
-    @Override
-    public void render() {
-        window.setClearColor(0.2f, 0.5f, 0.8f, 0);
         renderer.render(camera);
+        window.swapBuffers();
     }
 
-    @Override
-    public void cleanup() {
-        renderer.cleanup();
-        loader.cleanup();
+    private void close() {
+        renderer.destroy();
+        window.destroy();
     }
 }

@@ -1,35 +1,29 @@
 package net.singularity.world;
 
 import net.singularity.block.Block;
-import net.singularity.entity.Entity;
 import net.singularity.physics.AABB;
 import net.singularity.entity.Player;
 import net.singularity.system.Camera;
-import net.singularity.system.ObjectLoader;
-import net.singularity.rendering.RenderManager;
+import net.singularity.rendering.Renderer;
 import net.singularity.utils.Const;
 import org.joml.Math;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class World {
-    private final ObjectLoader loader;
     private final Camera camera;
     private final Player player;
     private final Random random = new Random();
     public byte[] blocks;
     private int[] lightDepths;
-    private List<Entity> entities;
     int unprocessed = 0;
     public int width;
     public int depth;
     public int height;
     public int size;
 
-    public World(ObjectLoader loader, Camera camera, int width, int depth, int height) {
-        this.loader = loader;
+    public World(Camera camera, int width, int depth, int height) {
         this.camera = camera;
         this.width = width;
         this.depth = depth;
@@ -41,20 +35,13 @@ public class World {
         this.calcLightDepths(0,0,width, height);
     }
 
-    public void init() throws Exception {
-        entities = new ArrayList<>();
+    public void init() {
     }
 
-    public void update(RenderManager renderer) {
+    public void update(Renderer renderer) {
         player.update();
 
         tick();
-
-        for(Entity entity : entities)
-            renderer.processEntity(entity);
-    }
-
-    public void cleanup() {
     }
 
     public void tick() {
@@ -137,17 +124,10 @@ public class World {
         }
     }
 
-    public ObjectLoader getLoader() {
-        return loader;
-    }
-
     public Camera getCamera() {
         return camera;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
 
     public int getTile(int x, int y, int z) {
         return x >= 0 && y >= 0 && z >= 0 && x < this.width && y < this.depth && z < this.height ? this.blocks[(y * this.height + z) * this.width + x] : 0;

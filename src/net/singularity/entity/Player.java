@@ -1,15 +1,14 @@
 package net.singularity.entity;
 
-import net.singularity.Main;
-import net.singularity.system.MouseInput;
-import net.singularity.system.Window;
+import net.singularity.system.Input;
 import net.singularity.utils.Const;
 import net.singularity.world.World;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Player extends Entity {
+    private double oldMouseX = 0, oldMouseY = 0, newMouseX, newMouseY;
+
     public Player(World world) {
         super(world, null);
         this.heightOffset = 1.6f;
@@ -23,26 +22,27 @@ public class Player extends Entity {
     }
 
     public void tick() {
+        newMouseX = Input.getMouseX();
+        newMouseY = Input.getMouseY();
+
         this.oldPos = this.pos;
         float dx = 0f;
         float dz = 0f;
 
-        Window window = Main.getWindow();
-
-        if(window.isKeyPressed(GLFW.GLFW_KEY_R))
+        if(Input.isKeyDown(GLFW.GLFW_KEY_R))
             this.resetPos();
 
-        if(window.isKeyPressed(GLFW.GLFW_KEY_Z))
+        if(Input.isKeyDown(GLFW.GLFW_KEY_Z))
             --dz;
-        else if(window.isKeyPressed(GLFW.GLFW_KEY_S))
+        else if(Input.isKeyDown(GLFW.GLFW_KEY_S))
             ++dz;
 
-        if(window.isKeyPressed(GLFW.GLFW_KEY_Q))
+        if(Input.isKeyDown(GLFW.GLFW_KEY_Q))
             --dx;
-        else if(window.isKeyPressed(GLFW.GLFW_KEY_D))
+        else if(Input.isKeyDown(GLFW.GLFW_KEY_D))
             ++dx;
 
-        if(window.isKeyPressed(GLFW.GLFW_KEY_SPACE) && this.onGround)
+        if(Input.isKeyDown(GLFW.GLFW_KEY_SPACE) && this.onGround)
             this.incPos.y = 0.4f;
 
         this.moveRelative(dx, dz, this.onGround ? 0.05f : 0.02f);
@@ -55,12 +55,14 @@ public class Player extends Entity {
             this.incPos.x *= 0.7F;
             this.incPos.z *= 0.7F;
         }
-    }
 
-    public void updateMouseInput(MouseInput mouseInput) {
-        Vector2f rotVec = mouseInput.getDisplVec().mul(Const.MOUSE_SENSITIVITY);
-        this.rot.x += rotVec.x;
-        this.rot.y += rotVec.y;
+        float dmx = (float) (newMouseX - oldMouseX);
+        float dmy = (float) (newMouseY - oldMouseY);
+
+        this.rot.add(new Vector3f(dmy * 0.15f, dmx * 0.15f, 0));
         this.rot.x = Math.clamp(this.rot.x, -90f, 90f);
+
+        oldMouseX = newMouseX;
+        oldMouseY = newMouseY;
     }
 }

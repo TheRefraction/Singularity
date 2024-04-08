@@ -1,36 +1,34 @@
 package net.singularity.rendering;
 
-import net.singularity.Main;
 import net.singularity.block.Block;
 import net.singularity.block.EBlockType;
-import net.singularity.entity.Model;
+import net.singularity.graphics.BlockMesh;
+import net.singularity.graphics.Mesh;
 import net.singularity.system.Camera;
-import net.singularity.system.Shader;
+import net.singularity.graphics.Shader;
 import net.singularity.utils.Transformation;
 import net.singularity.utils.Utils;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BlockRenderer implements IRenderer{
-    private final RenderManager renderer;
+public class BlockRenderer {
+    private final Renderer renderer;
     private final Shader shader;
     private final Map<Vector3i, List<Vector3f>> blocks;
 
-    public BlockRenderer(RenderManager renderer) throws Exception {
+    public BlockRenderer(Renderer renderer) throws Exception {
         this.renderer = renderer;
-        shader = new Shader();
-        blocks = new HashMap<>();
+        this.shader = new Shader();
+        this.blocks = new HashMap<>();
     }
 
-    @Override
     public void init() throws Exception {
         shader.createVertexShader(Utils.loadResources("/shaders/blockVertex.vsh"));
         shader.createFragmentShader(Utils.loadResources("/shaders/blockFragment.fsh"));
@@ -43,26 +41,27 @@ public class BlockRenderer implements IRenderer{
         shader.createUniform("viewMatrix");
     }
 
-    @Override
     public void render(Camera camera) {
         shader.bind();
-        shader.setUniform("projectionMatrix", Main.getWindow().updateProjectionMatrix());
+        shader.setUniform("projectionMatrix", renderer.getWindow().getProjectionMatrix());
 
         for(Vector3i key : blocks.keySet()) {
             Block block = Block.blocks[key.x];
             int face = key.y;
             EBlockType blockType = block.getBlockType();
-            float[] textureCoords = block.getFaceTexCoords(face);
 
-            Model model = renderer.getLoader().updateModelTexCoords(renderer.getLoader().getBlockModels(blockType, face), textureCoords);
-            bind(model);
+            /*FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
+            float[] textureData = block.getFaceTexCoords(face);
+            textureBuffer.put(textureData).flip();*/
+
+            Mesh mesh = BlockMesh.meshes[face];
+            //mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
+            bind(mesh);
             List<Vector3f> posList = blocks.get(key);
 
             for(Vector3f pos : posList) {
                 prepare(camera, pos.x, pos.y, pos.z, face, key.z);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-                GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+                GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
             }
             unbind();
         }
@@ -71,25 +70,22 @@ public class BlockRenderer implements IRenderer{
         shader.unbind();
     }
 
-    @Override
-    public void bind(Model model) {
-        GL30.glBindVertexArray((model.getId()));
+    public void bind(Mesh mesh) {
+        GL30.glBindVertexArray(mesh.getVAO());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
-
+        GL20.glEnableVertexAttribArray(2);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getLoader().getBlockTexture().getId());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getTextures().loadTexture("/textures/test.png"));
     }
 
-    @Override
     public void unbind() {
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
+        GL20.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);
-    }
-
-    @Override
-    public void prepare(Object o, Camera camera) {
     }
 
     public void prepare(Camera camera, float x, float y, float z, int face, int layer) {
@@ -100,9 +96,8 @@ public class BlockRenderer implements IRenderer{
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
     }
 
-    @Override
-    public void cleanup() {
-        shader.cleanup();
+    public void destroy() {
+        shader.destroy();
     }
 
     public Map<Vector3i, List<Vector3f>> getBlocks() {

@@ -37,7 +37,7 @@ public class WorldRenderer {
         }
     }
 
-    public void render(RenderManager renderer, int layer) {
+    public void render(Renderer renderer, int layer) {
         for (Chunk chunk : this.chunks) {
             if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb)) {
                 chunk.render(renderer, layer);

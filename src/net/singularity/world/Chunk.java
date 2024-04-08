@@ -1,7 +1,7 @@
 package net.singularity.world;
 
 import net.singularity.physics.AABB;
-import net.singularity.rendering.RenderManager;
+import net.singularity.rendering.Renderer;
 
 public class Chunk {
     public final World world;
@@ -31,7 +31,7 @@ public class Chunk {
         this.aabb = new AABB(x0, y0, z0, x1, y1, z1);
     }
 
-    public void render(RenderManager renderer, int layer) {
+    public void render(Renderer renderer, int layer) {
         this.dirty = false;
         for(int x = this.x0; x < this.x1; ++x) {
             for(int y = this.y0; y < this.y1; ++y) {
