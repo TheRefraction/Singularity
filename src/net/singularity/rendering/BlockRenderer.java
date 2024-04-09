@@ -50,12 +50,12 @@ public class BlockRenderer {
             int face = key.y;
             EBlockType blockType = block.getBlockType();
 
-            /*FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
+            FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
             float[] textureData = block.getFaceTexCoords(face);
-            textureBuffer.put(textureData).flip();*/
+            textureBuffer.put(textureData).flip();
 
             Mesh mesh = BlockMesh.meshes[face];
-            //mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
+            mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
             bind(mesh);
             List<Vector3f> posList = blocks.get(key);
 
@@ -77,7 +77,7 @@ public class BlockRenderer {
         GL20.glEnableVertexAttribArray(2);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getTextures().loadTexture("/textures/test.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, renderer.getTextures().loadTexture("/textures/terrain.png"));
     }
 
     public void unbind() {

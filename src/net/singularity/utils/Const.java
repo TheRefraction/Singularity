@@ -1,8 +1,8 @@
 package net.singularity.utils;
 
 public class Const {
-    public static final String TITLE = "sg-04072024";
-    public static final long NANOSECOND = 1000000000L;
+    public static final String TITLE = "sg-04092024";
+    public static final String GAME_VERSION = "0.0.1";
 
     public static final float FOV = (float) Math.toRadians(60);
     public static final float Z_NEAR = 0.01f;

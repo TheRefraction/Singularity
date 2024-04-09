@@ -1,7 +1,6 @@
 package net.singularity.entity;
 
 import net.singularity.system.Input;
-import net.singularity.utils.Const;
 import net.singularity.world.World;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;

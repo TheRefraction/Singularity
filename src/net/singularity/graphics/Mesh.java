@@ -43,7 +43,7 @@ public class Mesh {
         }
         textureBuffer.put(textureData).flip();
 
-        tbo = storeData(textureBuffer, 2, 2);
+        tbo = storeData(textureBuffer, 1, 2);
 
         IntBuffer indicesBuffer = MemoryUtil.memAllocInt(indices.length);
         indicesBuffer.put(indices).flip();

@@ -23,8 +23,6 @@ public class Singularity implements Runnable {
     public void start() {
         game = new Thread(this, "game");
         game.start();
-
-        //init();
     }
 
     public void init()  {
@@ -32,6 +30,7 @@ public class Singularity implements Runnable {
         this.window.setClearColor(0.2f, 0.2f, 0.8f);
         this.window.init();
 
+        System.out.println("Creating Textures and Renderer");
         textures = new Textures();
         this.renderer = new Renderer(this.window, textures);
         try {
@@ -40,29 +39,35 @@ public class Singularity implements Runnable {
             throw new RuntimeException(e);
         }
 
+        System.out.println("Creating Camera");
         this.camera = new Camera();
 
-        world = new World(this.camera, 32,32,32);
+        System.out.println("Creating World");
+        world = new World(this.camera, 256,256,256);
         this.worldRenderer = new WorldRenderer(world);
 
         world.init();
+        System.out.println("Done!");
     }
 
     public void run() {
         init();
-        while(!window.shouldClose() && !Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+        while(!window.shouldClose()) {
             update();
             render();
             if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) window.setFullscreen(!window.isFullscreen());
             if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) window.mouseState(true);
+            else if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) window.mouseState(false);
         }
         close();
     }
 
     private void update() {
         window.update();
-        camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
-        world.update(renderer);
+        if(window.getMouseState()) {
+            camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
+            world.update(renderer);
+        }
     }
 
     private void render() {

@@ -31,8 +31,7 @@ public class Window {
     }
 
     public void init() {
-        updateProjectionMatrix();
-
+        System.out.println("Initializing Window");
         GLFWErrorCallback.createPrint(System.err).set();
 
         if(!GLFW.glfwInit()) {
@@ -40,13 +39,15 @@ public class Window {
             return;
         }
 
-        GLFW.glfwDefaultWindowHints();
+        System.out.println("GLFW initialized!");
+
+        /*GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);
+        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);*/
 
         input = new Input();
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
@@ -55,6 +56,8 @@ public class Window {
             System.err.println("ERROR: Window wasn't created!");
             return;
         }
+
+        System.out.println("Window created!");
 
         GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
         if(vidMode == null) {
@@ -69,15 +72,19 @@ public class Window {
         GL.createCapabilities();
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
 
+        System.out.println("OpenGL context created!");
+
         createCallbacks();
+        System.out.println("Window callbacks created!");
 
         GLFW.glfwShowWindow(window);
 
         GLFW.glfwSwapInterval(1);
+
+        updateProjectionMatrix();
 
         time = System.currentTimeMillis();
     }
@@ -130,10 +137,15 @@ public class Window {
         GLFW.glfwWindowShouldClose(window);
         GLFW.glfwDestroyWindow(window);
         GLFW.glfwTerminate();
+        GLFW.glfwSetErrorCallback(null).free();
     }
 
     public void mouseState(boolean lock) {
         GLFW.glfwSetInputMode(this.window, GLFW.GLFW_CURSOR, lock ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+    }
+
+    public boolean getMouseState() {
+        return GLFW.glfwGetInputMode(this.window, GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED;
     }
 
     public void setClearColor(float r, float g, float b) {

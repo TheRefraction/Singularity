@@ -69,7 +69,7 @@ public class World {
             for(int y = 0; y < d; ++y) {
                 for(int z = 0; z < h; ++z) {
                     int i = (y * h + z) * w + x;
-                    int id = this.random.nextInt(2);
+                    int id = 1;//this.random.nextInt(1);
                     blocks[i] = (byte)id;
                 }
             }
@@ -170,5 +170,9 @@ public class World {
     public boolean isSolidTile(int x, int y, int z) {
         Block block = Block.blocks[this.getTile(x, y, z)];
         return block != null && block.isSolid();
+    }
+
+    public Player getPlayer() {
+        return this.player;
     }
 }

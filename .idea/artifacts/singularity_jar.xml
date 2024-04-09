@@ -12,6 +12,7 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-opengl.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-javadoc.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-sources.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/pngdecoder-1.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-stb-javadoc.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-stb-sources.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/lwjgl-glfw-javadoc.jar" path-in-jar="/" />

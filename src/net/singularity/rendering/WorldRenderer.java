@@ -1,5 +1,6 @@
 package net.singularity.rendering;
 
+import net.singularity.utils.Utils;
 import net.singularity.world.Chunk;
 import net.singularity.world.World;
 
@@ -39,7 +40,7 @@ public class WorldRenderer {
 
     public void render(Renderer renderer, int layer) {
         for (Chunk chunk : this.chunks) {
-            if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb)) {
+            if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb) && Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 64f) {
                 chunk.render(renderer, layer);
             }
         }
