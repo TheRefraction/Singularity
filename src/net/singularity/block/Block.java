@@ -59,12 +59,12 @@ public class Block {
         int tex = getTexture(face);
 
         float u0 = (float) (tex % 16) / 16.0f;
-        float u1 = u0 + Const.TEX_UV_STEP;
+        float u1 = u0 + Const.BLOCK_TEX_UV_STEP;
         float v0 = (float) (tex / 16) / 16.0f;
-        float v1 = v0 + Const.TEX_UV_STEP;
+        float v1 = v0 + Const.BLOCK_TEX_UV_STEP;
 
         if(this.getBlockType() == EBlockType.SLAB && face != 0 && face != 1) {
-            v0 += Const.TEX_UV_STEP / 2f;
+            v0 += Const.BLOCK_TEX_UV_STEP / 2f;
         }
 
         float[] textureCoords;

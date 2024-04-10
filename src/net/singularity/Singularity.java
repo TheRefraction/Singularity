@@ -4,18 +4,23 @@ import net.singularity.graphics.Textures;
 import net.singularity.rendering.Renderer;
 import net.singularity.rendering.WorldRenderer;
 import net.singularity.system.Camera;
-import net.singularity.system.Input;
+import net.singularity.system.Timer;
 import net.singularity.system.Window;
+import net.singularity.text.Font;
 import net.singularity.utils.Const;
 import net.singularity.utils.Transformation;
 import net.singularity.world.World;
-import org.lwjgl.glfw.GLFW;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Singularity implements Runnable {
     public Thread game;
     public Window window;
+    public Timer timer;
     public Renderer renderer;
     public Camera camera;
+    public Font font;
     public static World world;
     private WorldRenderer worldRenderer;
     public static Textures textures;
@@ -26,9 +31,13 @@ public class Singularity implements Runnable {
     }
 
     public void init()  {
-        this.window = new Window(Const.TITLE, 800, 600);
+        this.window = new Window(Const.TITLE, 800, 600, true);
         this.window.setClearColor(0.2f, 0.2f, 0.8f);
         this.window.init();
+
+        System.out.println("Creating Timer");
+        this.timer = new Timer();
+        this.timer.init();
 
         System.out.println("Creating Textures and Renderer");
         textures = new Textures();
@@ -38,6 +47,9 @@ public class Singularity implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        System.out.println("Creating Font");
+        this.font = new Font();
 
         System.out.println("Creating Camera");
         this.camera = new Camera();
@@ -52,18 +64,36 @@ public class Singularity implements Runnable {
 
     public void run() {
         init();
+
+        float delta;
+        float acc = 0f;
+        float interval = 1f / Const.TARGET_UPS;
         while(!window.shouldClose()) {
-            update();
+            delta = timer.getDelta();
+            acc += delta;
+
+            if(acc >= interval) {
+                update();
+                timer.updateUPS();
+                acc -= interval;
+            }
+
             render();
-            if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) window.setFullscreen(!window.isFullscreen());
-            if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) window.mouseState(true);
-            else if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) window.mouseState(false);
+            timer.updateFPS();
+
+            timer.update();
+
+            window.update();
+
+            if (!window.isVsync()) {
+                sync(Const.TARGET_FPS);
+            }
         }
         close();
     }
 
     private void update() {
-        window.update();
+        //window.update();
         if(window.getMouseState()) {
             camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
             world.update(renderer);
@@ -74,12 +104,30 @@ public class Singularity implements Runnable {
         worldRenderer.render(renderer, 0);
         worldRenderer.render(renderer, 1);
 
-        renderer.render(camera);
+        renderer.render(camera, font);
         window.swapBuffers();
     }
 
     private void close() {
         renderer.destroy();
         window.destroy();
+    }
+
+    public void sync(int fps) {
+        double lastLoopTime = timer.getLastLoopTime();
+        double now = timer.getTime();
+        float targetTime = 1f / fps;
+
+        while (now - lastLoopTime < targetTime) {
+            Thread.yield();
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Singularity.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            now = timer.getTime();
+        }
     }
 }

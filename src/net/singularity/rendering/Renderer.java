@@ -4,6 +4,7 @@ import net.singularity.block.Block;
 import net.singularity.graphics.Textures;
 import net.singularity.system.Camera;
 import net.singularity.system.Window;
+import net.singularity.text.Font;
 import net.singularity.world.World;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -15,6 +16,7 @@ public class Renderer {
     private Window window;
     private Textures textures;
     private BlockRenderer blockRenderer;
+    private TextRenderer textRenderer;
 
     public Renderer(Window window, Textures textures) {
         this.window = window;
@@ -24,10 +26,14 @@ public class Renderer {
     public void init() throws Exception {
         blockRenderer = new BlockRenderer(this);
         blockRenderer.init();
+
+        textRenderer = new TextRenderer(this);
+        textRenderer.init();
     }
 
-    public void render(Camera camera) {
+    public void render(Camera camera, Font font) {
         blockRenderer.render(camera);
+        textRenderer.render(font);
     }
 
     public void processBlock(World world, int tileId, int x, int y, int z, int layer) {
@@ -47,6 +53,7 @@ public class Renderer {
 
     public void destroy() {
         blockRenderer.destroy();
+        textRenderer.destroy();
     }
 
     public Window getWindow() {

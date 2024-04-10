@@ -13,6 +13,7 @@ public class Window {
     private int width, height;
     private String title;
     private long window;
+    private boolean vsync;
     private int frames;
     private static long time;
     private Input input;
@@ -23,10 +24,11 @@ public class Window {
     private float r = 0, g = 0, b = 0;
     private Matrix4f projectionMatrix;
 
-    public Window(String title, int width, int height) {
+    public Window(String title, int width, int height, boolean vsync) {
         this.width = width;
         this.height = height;
         this.title = title;
+        this.vsync = vsync;
         this.projectionMatrix = new Matrix4f();
     }
 
@@ -41,13 +43,13 @@ public class Window {
 
         System.out.println("GLFW initialized!");
 
-        /*GLFW.glfwDefaultWindowHints();
+        GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
-        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);*/
+        GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);
 
         input = new Input();
         window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
@@ -82,7 +84,8 @@ public class Window {
 
         GLFW.glfwShowWindow(window);
 
-        GLFW.glfwSwapInterval(1);
+        if(this.vsync)
+            GLFW.glfwSwapInterval(1);
 
         updateProjectionMatrix();
 
@@ -106,6 +109,11 @@ public class Window {
     }
 
     public void update() {
+        if (Input.isKeyDown(GLFW.GLFW_KEY_F11)) setFullscreen(!isFullscreen());
+        if (Input.isKeyDown(GLFW.GLFW_KEY_F12)) setVsync(!isVsync());
+        if (Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)) mouseState(true);
+        else if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) mouseState(false);
+
         if(isResized) {
             GL11.glViewport(0, 0, width, height);
             updateProjectionMatrix();
@@ -167,6 +175,19 @@ public class Window {
         } else {
             GLFW.glfwSetWindowMonitor(window, 0, windowPosX[0], windowPosY[0], width, height, 0);
         }
+    }
+
+    public void setVsync(boolean vsync) {
+        this.vsync = vsync;
+        if(vsync) {
+            GLFW.glfwSwapInterval(1);
+        } else {
+            GLFW.glfwSwapInterval(0);
+        }
+    }
+
+    public boolean isVsync() {
+        return vsync;
     }
 
     public int getWidth() {
