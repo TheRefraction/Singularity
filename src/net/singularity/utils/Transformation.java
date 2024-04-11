@@ -2,6 +2,7 @@ package net.singularity.utils;
 
 import net.singularity.entity.Entity;
 import net.singularity.system.Camera;
+import net.singularity.text.Text;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -38,5 +39,15 @@ public class Transformation {
                 .translate(-pos.x, -pos.y, -pos.z);
 
         return matrix;
+    }
+
+    public static Matrix4f getOrtoProjModelMatrix(float x, float y, float z, float scale) {
+        Matrix4f modelMatrix = new Matrix4f();
+
+        modelMatrix.identity()
+                .translate(x, y, z)
+                .scale(scale);
+
+        return modelMatrix;
     }
 }

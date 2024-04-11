@@ -14,7 +14,8 @@ public class Font {
     private void init() {
         for(int i = 0; i < 256; i++) {
             char c = (char)i;
-            Glyph ch = new Glyph(8, 8, i % 32, i / 32);
+
+            Glyph ch = new Glyph(8, 8, i % 16, i / 16);
             glyphs.put(c, ch);
         }
     }

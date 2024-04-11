@@ -7,6 +7,7 @@ import net.singularity.text.Font;
 import net.singularity.text.Glyph;
 import net.singularity.text.Text;
 import net.singularity.utils.Const;
+import net.singularity.utils.Transformation;
 import net.singularity.utils.Utils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -52,16 +53,16 @@ public class TextRenderer {
         shader.link();
         shader.createUniform("textureSampler");
         shader.createUniform("color");
-        shader.createUniform("projectionMatrix");
+        shader.createUniform("orthoProjMatrix");
     }
 
     public void render(Font font) {
         shader.bind();
-        shader.setUniform("projectionMatrix", renderer.getWindow().getProjectionMatrix());
 
-        texts.add(new Text("Test", new Vector2f(0,0), new Vector4f(1,1,1,1)));
+        texts.add(new Text("Hello", new Vector2f(-0.95f,0.95f), new Vector4f(1,1,1,1), 0.05f));
 
         for(Text text : texts) {
+            int i = 0;
             for(Character c : text.getText().toCharArray()) {
                 Glyph ch = font.getGlyph(c);
 
@@ -82,9 +83,11 @@ public class TextRenderer {
                 charMesh.updateBufferObject(textureBuffer, charMesh.getTBO(), 2, 2);
                 bind(charMesh);
 
-                prepare(text.getPosition(), text.getColor());
+                prepare(text, i);
                 GL11.glDrawElements(GL11.GL_TRIANGLES, charMesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
                 unbind();
+
+                i++;
             }
         }
         texts.clear(); // TO SEE
@@ -110,9 +113,10 @@ public class TextRenderer {
         GL30.glBindVertexArray(0);
     }
 
-    public void prepare(Vector2f position, Vector4f color) {
+    public void prepare(Text text, int i) {
         shader.setUniform("textureSampler", 0);
-        shader.setUniform("color", color);
+        shader.setUniform("orthoProjMatrix", Transformation.getOrtoProjModelMatrix(text.getPosition().x + i * text.getSize(), text.getPosition().y, 0, text.getSize()));
+        shader.setUniform("color", text.getColor());
     }
 
     public void destroy() {

@@ -5,9 +5,9 @@ in vec2 textureCoords;
 
 out vec2 fragTextureCoords;
 
-uniform mat4 projectionMatrix;
+uniform mat4 orthoProjMatrix;
 
 void main() {
-    gl_Position = vec4(position, 1.0);
+    gl_Position = orthoProjMatrix * vec4(position, 1.0);
     fragTextureCoords = textureCoords;
 }

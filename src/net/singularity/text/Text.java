@@ -7,11 +7,13 @@ public class Text {
     private String text;
     private Vector2f position;
     private Vector4f color;
+    private float size;
 
-    public Text(String text, Vector2f position, Vector4f color) {
+    public Text(String text, Vector2f position, Vector4f color, float size) {
         this.text = text;
         this.position = position;
         this.color = color;
+        this.size = size;
     }
 
     public String getText() {
@@ -24,5 +26,9 @@ public class Text {
 
     public Vector4f getColor() {
         return color;
+    }
+
+    public float getSize() {
+        return size;
     }
 }
