@@ -17,7 +17,9 @@ public class Input {
         System.out.println("Creating Input");
         keyboard = new GLFWKeyCallback() {
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                keys[key] = (action != GLFW.GLFW_RELEASE);
+                if (key != -1) {
+                    keys[key] = (action != GLFW.GLFW_RELEASE);
+                }
             }
         };
 

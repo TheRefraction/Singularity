@@ -1,7 +1,10 @@
 package net.singularity.world;
 
+import net.singularity.block.Block;
 import net.singularity.physics.AABB;
 import net.singularity.rendering.Renderer;
+import net.singularity.utils.Utils;
+import org.joml.Math;
 
 public class Chunk {
     public final World world;
@@ -39,6 +42,26 @@ public class Chunk {
                     int tileId = this.world.getTile(x, y, z);
                     if (tileId > 0) {
                         renderer.processBlock(this.world, tileId, x, y, z, layer);
+                    }
+                }
+            }
+        }
+    }
+
+    public void selectBlock() {
+        float closest = 10f;
+        float dist;
+        for(int x = this.x0; x < this.x1; ++x) {
+            for(int y = this.y0; y < this.y1; ++y) {
+                for(int z = this.z0; z < this.z1; ++z) {
+                    int tileId = this.world.getTile(x, y, z);
+                    dist = Utils.getDistance(x, y, z, world.getCamera().getPos().x, world.getCamera().getPos().y, world.getCamera().getPos().z);
+                    if (tileId > 0 && dist < 4.0f) {
+                        AABB aabb = Block.blocks[tileId].getAABB(x, y, z);
+                        if(world.getCamera().getRayCast().test(aabb.x0, aabb.y0, aabb.z0, aabb.x1, aabb.y1, aabb.z1) && dist < closest) {
+                            closest = dist;
+                            world.getCamera().getSelectedBlock().set(x, y, z);
+                        }
                     }
                 }
             }

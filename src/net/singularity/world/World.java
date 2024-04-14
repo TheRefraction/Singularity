@@ -69,7 +69,7 @@ public class World {
             for(int y = 0; y < d; ++y) {
                 for(int z = 0; z < h; ++z) {
                     int i = (y * h + z) * w + x;
-                    int id = 1;//this.random.nextInt(1);
+                    int id = 3;//this.random.nextInt(2);
                     blocks[i] = (byte)id;
                 }
             }
@@ -124,10 +124,6 @@ public class World {
         }
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
-
 
     public int getTile(int x, int y, int z) {
         return x >= 0 && y >= 0 && z >= 0 && x < this.width && y < this.depth && z < this.height ? this.blocks[(y * this.height + z) * this.width + x] : 0;
@@ -156,7 +152,7 @@ public class World {
                     Block block = Block.blocks[this.getTile(x, y, z)];
                     if (block != null) {
                         AABB aabb = block.getAABB(x, y, z);
-                        if (aabb != null) {
+                        if (block.isSolid() && aabb != null) {
                             aabbList.add(aabb);
                         }
                     }
@@ -170,6 +166,10 @@ public class World {
     public boolean isSolidTile(int x, int y, int z) {
         Block block = Block.blocks[this.getTile(x, y, z)];
         return block != null && block.isSolid();
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     public Player getPlayer() {

@@ -36,6 +36,7 @@ public class BlockRenderer {
         shader.createUniform("textureSampler");
         shader.createUniform("face");
         shader.createUniform("layer");
+        shader.createUniform("outSelected");
         shader.createUniform("transformationMatrix");
         shader.createUniform("projectionMatrix");
         shader.createUniform("viewMatrix");
@@ -89,9 +90,11 @@ public class BlockRenderer {
     }
 
     public void prepare(Camera camera, float x, float y, float z, int face, int layer) {
+        boolean selected = camera.getSelectedBlock().x == x && camera.getSelectedBlock().y == y && camera.getSelectedBlock().z == z;
         shader.setUniform("textureSampler", 0);
         shader.setUniform("face", face);
         shader.setUniform("layer", layer);
+        shader.setUniform("outSelected", selected);
         shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(x, y, z));
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
     }

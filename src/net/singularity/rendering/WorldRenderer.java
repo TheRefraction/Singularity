@@ -41,6 +41,9 @@ public class WorldRenderer {
     public void render(Renderer renderer, int layer) {
         for (Chunk chunk : this.chunks) {
             if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb) && Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 64f) {
+                if (Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 20f)  {
+                    chunk.selectBlock();
+                }
                 chunk.render(renderer, layer);
             }
         }

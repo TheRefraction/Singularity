@@ -59,7 +59,7 @@ public class TextRenderer {
     public void render(Font font) {
         shader.bind();
 
-        texts.add(new Text("Hello", new Vector2f(-0.95f,0.95f), new Vector4f(1,1,1,1), 0.05f));
+        //texts.add(new Text("Hello", new Vector2f(-0.95f,0.95f), new Vector4f(1,1,1,1), 0.05f));
 
         for(Text text : texts) {
             int i = 0;

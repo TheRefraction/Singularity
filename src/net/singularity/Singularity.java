@@ -93,7 +93,6 @@ public class Singularity implements Runnable {
     }
 
     private void update() {
-        //window.update();
         if(window.getMouseState()) {
             camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
             world.update(renderer);
@@ -101,6 +100,8 @@ public class Singularity implements Runnable {
     }
 
     private void render() {
+        camera.getSelectedBlock().set(-1, -1, -1);
+
         worldRenderer.render(renderer, 0);
         worldRenderer.render(renderer, 1);
 

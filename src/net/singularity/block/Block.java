@@ -13,9 +13,9 @@ public class Block {
     public static final Block empty = null;
     public static final Block rock = new Block(1, 1);
     public static final Block grass = new GrassBlock(2);
-    public static final Block dirt = new Block(3, 2);
+    public static final Block dirt = new DirtBlock(3);
     public static final Block wood = new Block(4, 4);
-    public static final Block glass = new NonSolidBlock(5, 39);
+    public static final Block glass = new TransparentBlock(5, 39);
 
     public int tex;
     public final int id;
@@ -127,7 +127,7 @@ public class Block {
     }
 
     protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
-        return !(world.isSolidTile(x, y, z) && Block.blocks[world.getTile(x, y, z)].getBlockType() == EBlockType.NORMAL) && world.isLit(x, y, z) ^ layer == 1;
+        return !(world.isSolidTile(x, y, z)) && world.isLit(x, y, z) ^ layer == 1; // && Block.blocks[world.getTile(x, y, z)].getBlockType() == EBlockType.NORMAL
     }
 
     protected int getTexture(int face) {

@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Player extends Entity {
     private double oldMouseX = 0, oldMouseY = 0, newMouseX, newMouseY;
+    private int leftButtonBuffer = 0, rightButtonBuffer = 0;
 
     public Player(World world) {
         super(world, null);
@@ -16,8 +17,7 @@ public class Player extends Entity {
     public void update() {
         tick();
 
-        world.getCamera().setPosition(this.pos.x, this.pos.y, this.pos.z);
-        world.getCamera().setRotation(this.rot.x, this.rot.y, this.rot.z);
+        world.getCamera().update(pos.x, pos.y, pos.z, rot.x, rot.y, rot.z);
     }
 
     public void tick() {
@@ -27,6 +27,14 @@ public class Player extends Entity {
         this.oldPos = this.pos;
         float dx = 0f;
         float dz = 0f;
+
+        if(leftButtonBuffer > 0) {
+            leftButtonBuffer -= 1;
+        }
+
+        if(rightButtonBuffer > 0) {
+            rightButtonBuffer -= 1;
+        }
 
         if(Input.isKeyDown(GLFW.GLFW_KEY_R))
             this.resetPos();
@@ -43,6 +51,16 @@ public class Player extends Entity {
 
         if(Input.isKeyDown(GLFW.GLFW_KEY_SPACE) && this.onGround)
             this.incPos.y = 0.4f;
+
+        if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftButtonBuffer <= 0) {
+            world.setTile(world.getCamera().getSelectedBlock().x, world.getCamera().getSelectedBlock().y, world.getCamera().getSelectedBlock().z, 0);
+            leftButtonBuffer = 8;
+        }
+
+        if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightButtonBuffer <= 0) {
+            world.setTile(world.getCamera().getSelectedBlock().x, world.getCamera().getSelectedBlock().y, world.getCamera().getSelectedBlock().z, 1);
+            rightButtonBuffer = 8;
+        }
 
         this.moveRelative(dx, dz, this.onGround ? 0.05f : 0.02f);
         this.incPos.y -= 0.04f;

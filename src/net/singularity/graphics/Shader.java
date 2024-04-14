@@ -54,7 +54,7 @@ public class Shader {
     }
 
     public void setUniform(String uniformName, boolean value) {
-        float res = value ? 1 : 0;
+        float res = value ? 1f : 0f;
         GL20.glUniform1f(uniforms.get(uniformName), res);
     }
 
