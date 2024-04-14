@@ -62,14 +62,19 @@ public class World {
 
     public byte[] genTest() {
         int w = this.width;
-        int h = this.depth;
-        int d = this.height;
+        int h = this.height;
+        int d = this.depth;
         byte[] blocks = new byte[this.size];
         for(int x = 0; x < w; ++x) {
             for(int y = 0; y < d; ++y) {
                 for(int z = 0; z < h; ++z) {
                     int i = (y * h + z) * w + x;
-                    int id = 3;//this.random.nextInt(2);
+                    int id = 0;
+                    if(y < 0.5f * d) {
+                        id = 1;
+                    } else if(y >= 0.5f * d && y < 0.75f * d) {
+                        id = 3;
+                    }
                     blocks[i] = (byte)id;
                 }
             }
@@ -82,15 +87,16 @@ public class World {
             for(int z = y0; z < y0 + y1; ++z) {
                 int oldDepth = this.lightDepths[x + z * this.width];
 
-                int y;
-                for(y = this.depth - 1; y > 0 && !this.isLightBlocker(x, y, z); --y) {
+                int y = this.depth - 1;
+                while (y > 0 && !this.isLightBlocker(x, y, z)) {
+                    --y;
                 }
 
                 this.lightDepths[x + z * this.width] = y;
-                if (oldDepth != y) {
+                /*if (oldDepth != y) {
                     int yl0 = Math.min(oldDepth, y);
                     int yl1 = Math.max(oldDepth, y);
-                }
+                }*/
             }
         }
 

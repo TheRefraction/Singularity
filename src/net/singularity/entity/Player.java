@@ -1,6 +1,8 @@
 package net.singularity.entity;
 
+import net.singularity.physics.AABB;
 import net.singularity.system.Input;
+import net.singularity.utils.Utils;
 import net.singularity.world.World;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -58,7 +60,28 @@ public class Player extends Entity {
         }
 
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightButtonBuffer <= 0) {
-            world.setTile(world.getCamera().getSelectedBlock().x, world.getCamera().getSelectedBlock().y, world.getCamera().getSelectedBlock().z, 1);
+            int fb_dx = -1, fb_dy = -1, fb_dz = -1;
+            int x = world.getCamera().getSelectedBlock().x;
+            int y = world.getCamera().getSelectedBlock().y;
+            int z = world.getCamera().getSelectedBlock().z;
+            float distance = Utils.getDistance(x, y, z, pos.x, pos.y, pos.z);
+            for(int i = 0; i < 6; i++) {
+                int b_dx = x + (i == 0 ? -1 : (i == 1 ? 1 : 0));
+                int b_dy = y + (i == 2 ? -1 : (i == 3 ? 1 : 0));
+                int b_dz = z + (i == 4 ? -1 : (i == 5 ? 1 : 0));
+                float dist = Utils.getDistance(b_dx, b_dy, b_dz, pos.x, pos.y, pos.z);
+
+                if(world.getTile(b_dx, b_dy, b_dz) == 0 && !this.aabb.intersects(new AABB(b_dx, b_dy, b_dz, b_dx + 1, b_dy + 1, b_dz + 1)) && world.getCamera().getRayCast().test(b_dx, b_dy, b_dz, b_dx + 1, b_dy + 1, b_dz + 1) && dist < distance) {
+                    distance = dist;
+                    fb_dx = b_dx;
+                    fb_dy = b_dy;
+                    fb_dz = b_dz;
+                }
+            }
+            if(fb_dx != -1 && fb_dy != -1 && fb_dz != -1) {
+                world.setTile(fb_dx, fb_dy, fb_dz, 4);
+                world.getCamera().getSelectedBlock().set(-1, -1, -1);
+            }
             rightButtonBuffer = 8;
         }
 

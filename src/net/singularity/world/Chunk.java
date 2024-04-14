@@ -4,7 +4,6 @@ import net.singularity.block.Block;
 import net.singularity.physics.AABB;
 import net.singularity.rendering.Renderer;
 import net.singularity.utils.Utils;
-import org.joml.Math;
 
 public class Chunk {
     public final World world;
@@ -49,7 +48,7 @@ public class Chunk {
     }
 
     public void selectBlock() {
-        float closest = 10f;
+        float closest = Float.POSITIVE_INFINITY;
         float dist;
         for(int x = this.x0; x < this.x1; ++x) {
             for(int y = this.y0; y < this.y1; ++y) {
