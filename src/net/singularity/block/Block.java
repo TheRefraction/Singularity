@@ -15,6 +15,11 @@ public class Block {
     public static final Block grass = new GrassBlock(2);
     public static final Block dirt = new DirtBlock(3);
     public static final Block cobblestone = new Block(4, 16);
+    public static final Block bedrock = new Block(5, 17);
+    public static final Block rose = new BushBlock(6, 12);
+    public static final Block dandelion = new BushBlock(7, 13);
+    public static final Block glass = new TransparentBlock(8, 39);
+    public static final Block water = new LiquidBlock(9, 14);
 
     public int tex;
     public final int id;
@@ -32,23 +37,32 @@ public class Block {
     public List<Integer> getFacesToRender(World world, int x, int y, int z, int layer) {
         List<Integer> facesToRender = new ArrayList<>();
 
-        if(this.shouldRenderFace(world, x, y - 1, z, layer)) {
-            facesToRender.add(0);
-        }
-        if(this.shouldRenderFace(world, x, y + 1, z, layer) || this.getBlockType() == EBlockType.SLAB) {
-            facesToRender.add(1);
-        }
-        if(this.shouldRenderFace(world, x, y, z - 1, layer)) {
-            facesToRender.add(2);
-        }
-        if(this.shouldRenderFace(world, x, y, z + 1, layer)) {
-            facesToRender.add(3);
-        }
-        if(this.shouldRenderFace(world, x - 1, y, z, layer)) {
-            facesToRender.add(4);
-        }
-        if(this.shouldRenderFace(world, x + 1, y, z, layer)) {
-            facesToRender.add(5);
+        if(this.getBlockType() == EBlockType.BUSH) {
+            if(this.shouldRenderFace(world, x, y - 1, z, layer) || this.shouldRenderFace(world, x, y + 1, z, layer) ||
+                    this.shouldRenderFace(world, x - 1, y, z, layer) || this.shouldRenderFace(world, x + 1, y, z, layer) ||
+                    this.shouldRenderFace(world, x, y, z - 1, layer) || this.shouldRenderFace(world, x, y, z + 1, layer)) {
+                facesToRender.add(6);
+                facesToRender.add(7);
+            }
+        } else {
+            if(this.shouldRenderFace(world, x, y - 1, z, layer)) {
+                facesToRender.add(0);
+            }
+            if(this.shouldRenderFace(world, x, y + 1, z, layer) || this.getBlockType() == EBlockType.SLAB) {
+                facesToRender.add(1);
+            }
+            if(this.shouldRenderFace(world, x, y, z - 1, layer)) {
+                facesToRender.add(2);
+            }
+            if(this.shouldRenderFace(world, x, y, z + 1, layer)) {
+                facesToRender.add(3);
+            }
+            if(this.shouldRenderFace(world, x - 1, y, z, layer)) {
+                facesToRender.add(4);
+            }
+            if(this.shouldRenderFace(world, x + 1, y, z, layer)) {
+                facesToRender.add(5);
+            }
         }
 
         return facesToRender;
@@ -126,7 +140,7 @@ public class Block {
     }
 
     protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
-        return !(world.isSolidTile(x, y, z)) && world.isLit(x, y, z) ^ layer == 1; // && Block.blocks[world.getTile(x, y, z)].getBlockType() == EBlockType.NORMAL
+        return !(world.isSolidTile(x, y, z) && world.isLightBlocker(x, y, z)) && world.isLit(x, y, z) ^ layer == 1;
     }
 
     protected int getTexture(int face) {

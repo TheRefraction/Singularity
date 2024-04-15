@@ -1,7 +1,7 @@
 package net.singularity.utils;
 
 public class Const {
-    public static final String TITLE = "sg-04102024";
+    public static final String TITLE = "sg-04152024";
     public static final String GAME_VERSION = "0.0.1";
 
     public static final int TARGET_UPS = 40;

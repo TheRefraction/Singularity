@@ -31,7 +31,7 @@ public class Singularity implements Runnable {
     }
 
     public void init()  {
-        this.window = new Window(Const.TITLE, 800, 600, true);
+        this.window = new Window(Const.TITLE, 640, 480, true);
         this.window.setClearColor(0.2f, 0.2f, 0.8f);
         this.window.init();
 
@@ -55,7 +55,7 @@ public class Singularity implements Runnable {
         this.camera = new Camera();
 
         System.out.println("Creating World");
-        world = new World(this.camera, 256,256,256);
+        world = new World(this.camera, 256,64,256);
         this.worldRenderer = new WorldRenderer(world);
 
         world.init();
@@ -81,14 +81,16 @@ public class Singularity implements Runnable {
             render();
             timer.updateFPS();
 
-            timer.update();
-
             window.update();
+            timer.update();
 
             if (!window.isVsync()) {
                 sync(Const.TARGET_FPS);
             }
+
+            System.out.println("FPS: " + timer.getFPS() + " UPS: " + timer.getUPS());
         }
+        world.save();
         close();
     }
 

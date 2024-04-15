@@ -57,7 +57,7 @@ public class Chunk {
                     dist = Utils.getDistance(x, y, z, world.getCamera().getPos().x, world.getCamera().getPos().y, world.getCamera().getPos().z);
                     if (tileId > 0 && dist < 4.0f) {
                         AABB aabb = Block.blocks[tileId].getAABB(x, y, z);
-                        if(world.getCamera().getRayCast().test(aabb.x0, aabb.y0, aabb.z0, aabb.x1, aabb.y1, aabb.z1) && dist < closest) {
+                        if(aabb != null && world.getCamera().getRayCast().test(aabb.x0, aabb.y0, aabb.z0, aabb.x1, aabb.y1, aabb.z1) && dist < closest) {
                             closest = dist;
                             world.getCamera().getSelectedBlock().set(x, y, z);
                         }

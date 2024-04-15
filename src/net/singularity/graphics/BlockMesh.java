@@ -4,12 +4,12 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class BlockMesh {
-    private static int[] tileIndices = {
+    private static final int[] tileIndices = {
             0, 1, 3,
             3, 1, 2
     };
 
-    public static final Mesh[] meshes = new Mesh[12];
+    public static final Mesh[] meshes = new Mesh[14];
     public static final BlockMesh blockBottom = new BlockMesh(0, new Mesh(
             new Vertex[] {
                     new Vertex(new Vector3f(0, 0, 1), new Vector2f(0, 1)),
@@ -56,6 +56,22 @@ public class BlockMesh {
                     new Vertex(new Vector3f(1, 0, 0), new Vector2f(0, 0)),
                     new Vertex(new Vector3f(1, 1, 0), new Vector2f(1, 0)),
                     new Vertex(new Vector3f(1, 1, 1), new Vector2f(1, 1)),
+            }, tileIndices));
+
+    public static final BlockMesh blockBush1 = new BlockMesh(6, new Mesh(
+            new Vertex[] {
+                    new Vertex(new Vector3f(0, 1, 0), new Vector2f(0, 1)),
+                    new Vertex(new Vector3f(1, 1, 1), new Vector2f(0, 0)),
+                    new Vertex(new Vector3f(1, 0, 1), new Vector2f(1, 0)),
+                    new Vertex(new Vector3f(0, 0, 0), new Vector2f(1, 1)),
+            }, tileIndices));
+
+    public static final BlockMesh blockBush2 = new BlockMesh(7, new Mesh(
+            new Vertex[] {
+                    new Vertex(new Vector3f(1, 1, 0), new Vector2f(0, 1)),
+                    new Vertex(new Vector3f(0, 1, 1), new Vector2f(0, 0)),
+                    new Vertex(new Vector3f(0, 0, 1), new Vector2f(1, 0)),
+                    new Vertex(new Vector3f(1, 0, 0), new Vector2f(1, 1)),
             }, tileIndices));
 
     public final int id;

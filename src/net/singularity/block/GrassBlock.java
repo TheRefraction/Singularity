@@ -16,8 +16,8 @@ public class GrassBlock extends Block {
     }
 
     public void tick(World world, int x, int y, int z, Random random) {
-        if(world.getTile(x, y + 1, z) != 0) {
-            world.setTile(x, y, z, 3);
+        if((world.getTile(x, y + 1, z) != 0 && world.isSolidTile(x, y + 1, z)) || !world.isLit(x, y, z)) {
+            world.setTile(x, y, z, dirt.id);
         }
     }
 }

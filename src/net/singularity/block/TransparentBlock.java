@@ -1,5 +1,7 @@
 package net.singularity.block;
 
+import net.singularity.world.World;
+
 public class TransparentBlock extends Block {
 
     protected TransparentBlock(int id, int tex) {
@@ -8,5 +10,9 @@ public class TransparentBlock extends Block {
 
     public boolean blocksLight() {
         return false;
+    }
+
+    protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
+        return !(world.isSolidTile(x, y, z)) && world.isLit(x, y, z) ^ layer == 1;
     }
 }

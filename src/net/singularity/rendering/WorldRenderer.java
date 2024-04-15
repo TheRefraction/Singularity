@@ -5,11 +5,11 @@ import net.singularity.world.Chunk;
 import net.singularity.world.World;
 
 public class WorldRenderer {
-    private World world;
-    private Chunk[] chunks;
-    private int xChunks;
-    private int yChunks;
-    private int zChunks;
+    private final World world;
+    private final Chunk[] chunks;
+    private final int xChunks;
+    private final int yChunks;
+    private final int zChunks;
 
     public WorldRenderer(World world) {
         this.world = world;
@@ -40,8 +40,8 @@ public class WorldRenderer {
 
     public void render(Renderer renderer, int layer) {
         for (Chunk chunk : this.chunks) {
-            if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb) && Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 64f) {
-                if (Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 20f)  {
+            if(this.world.getCamera().getFrustumFilter().insideFrustum(chunk.aabb) && Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 48f) {
+                if (Utils.getDistance(chunk.x, chunk.y, chunk.z, world.getPlayer().pos.x, world.getPlayer().pos.y, world.getPlayer().pos.z) <= 16f)  {
                     chunk.selectBlock();
                 }
                 chunk.render(renderer, layer);

@@ -1,5 +1,6 @@
 package net.singularity.entity;
 
+import net.singularity.block.Block;
 import net.singularity.physics.AABB;
 import net.singularity.system.Input;
 import net.singularity.utils.Utils;
@@ -55,8 +56,13 @@ public class Player extends Entity {
             this.incPos.y = 0.4f;
 
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftButtonBuffer <= 0) {
-            world.setTile(world.getCamera().getSelectedBlock().x, world.getCamera().getSelectedBlock().y, world.getCamera().getSelectedBlock().z, 0);
-            leftButtonBuffer = 8;
+            int x = world.getCamera().getSelectedBlock().x;
+            int y = world.getCamera().getSelectedBlock().y;
+            int z = world.getCamera().getSelectedBlock().z;
+            if(world.getTile(x, y, z) != Block.bedrock.id) {
+                world.setTile(x, y, z, 0);
+                leftButtonBuffer = 8;
+            }
         }
 
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightButtonBuffer <= 0) {
@@ -79,10 +85,10 @@ public class Player extends Entity {
                 }
             }
             if(fb_dx != -1 && fb_dy != -1 && fb_dz != -1) {
-                world.setTile(fb_dx, fb_dy, fb_dz, 4);
+                world.setTile(fb_dx, fb_dy, fb_dz, Block.cobblestone.id);
                 world.getCamera().getSelectedBlock().set(-1, -1, -1);
+                rightButtonBuffer = 8;
             }
-            rightButtonBuffer = 8;
         }
 
         this.moveRelative(dx, dz, this.onGround ? 0.05f : 0.02f);

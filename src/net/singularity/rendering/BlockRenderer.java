@@ -48,15 +48,35 @@ public class BlockRenderer {
 
         for(Vector3i key : blocks.keySet()) {
             Block block = Block.blocks[key.x];
-            int face = key.y;
             EBlockType blockType = block.getBlockType();
 
-            FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
-            float[] textureData = block.getFaceTexCoords(face);
-            textureBuffer.put(textureData).flip();
+            Mesh mesh = null;
+            int face = 1;
 
-            Mesh mesh = BlockMesh.meshes[face];
-            mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
+            if(blockType == EBlockType.NORMAL) {
+                GL11.glEnable(GL11.GL_CULL_FACE);
+                face = key.y;
+
+                FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
+                float[] textureData = block.getFaceTexCoords(face);
+                textureBuffer.put(textureData).flip();
+
+                mesh = BlockMesh.meshes[face];
+                mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
+            } else if(blockType == EBlockType.BUSH) {
+                GL11.glDisable(GL11.GL_CULL_FACE);
+                FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(4 * 2);
+                float[] textureData = block.getFaceTexCoords(2);
+                textureBuffer.put(textureData).flip();
+
+                mesh = BlockMesh.meshes[key.y];
+                mesh.updateBufferObject(textureBuffer, mesh.getTBO(), 2, 2);
+            }
+
+            if(mesh == null) {
+                continue;
+            }
+
             bind(mesh);
             List<Vector3f> posList = blocks.get(key);
 
