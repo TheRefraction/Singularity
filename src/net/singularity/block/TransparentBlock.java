@@ -12,7 +12,7 @@ public class TransparentBlock extends Block {
         return false;
     }
 
-    protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
-        return !(world.isSolidTile(x, y, z)) && world.isLit(x, y, z) ^ layer == 1;
+    protected boolean shouldRenderFace(World world, int x, int y, int z) {
+        return !world.isSolidTile(x, y, z);
     }
 }

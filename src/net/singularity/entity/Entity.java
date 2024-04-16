@@ -44,7 +44,7 @@ public class Entity {
 
     public void resetPos() {
         float x = (float)Math.random() * this.world.width;
-        float y = (float)(this.world.depth + 20);
+        float y = this.world.depth + 10;
         float z = (float)Math.random() * this.world.height;
         this.setPos(x, y, z);
     }

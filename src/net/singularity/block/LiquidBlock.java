@@ -18,8 +18,8 @@ public class LiquidBlock extends Block {
         return null;
     }
 
-    protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
-        return !(world.isSolidTile(x, y, z) || world.getTile(x, y, z) == id) && world.isLit(x, y, z) ^ layer == 1;
+    protected boolean shouldRenderFace(World world, int x, int y, int z) {
+        return !(world.isSolidTile(x, y, z) || world.getTile(x, y, z) == id);
     }
 
     public EBlockType getBlockType() {

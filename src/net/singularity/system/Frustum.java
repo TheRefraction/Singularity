@@ -4,11 +4,11 @@ import net.singularity.physics.AABB;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 
-public class FrustumCullingFilter {
+public class Frustum {
     private final Matrix4f frustumMatrix;
-    private FrustumIntersection frustumInter;
+    private final FrustumIntersection frustumInter;
 
-    public FrustumCullingFilter() {
+    public Frustum() {
         this.frustumMatrix = new Matrix4f();
         this.frustumInter = new FrustumIntersection();
     }

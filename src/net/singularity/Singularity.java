@@ -9,6 +9,7 @@ import net.singularity.system.Window;
 import net.singularity.text.Font;
 import net.singularity.utils.Const;
 import net.singularity.utils.Transformation;
+import net.singularity.world.Chunk;
 import net.singularity.world.World;
 
 import java.util.logging.Level;
@@ -31,8 +32,8 @@ public class Singularity implements Runnable {
     }
 
     public void init()  {
-        this.window = new Window(Const.TITLE, 640, 480, true);
-        this.window.setClearColor(0.2f, 0.2f, 0.8f);
+        this.window = new Window(Const.TITLE, 800, 600, true);
+        this.window.setClearColor(0.3f, 0.6f, 0.8f);
         this.window.init();
 
         System.out.println("Creating Timer");
@@ -41,6 +42,7 @@ public class Singularity implements Runnable {
 
         System.out.println("Creating Textures and Renderer");
         textures = new Textures();
+
         this.renderer = new Renderer(this.window, textures);
         try {
             this.renderer.init();
@@ -58,16 +60,20 @@ public class Singularity implements Runnable {
         world = new World(this.camera, 256,64,256);
         this.worldRenderer = new WorldRenderer(world);
 
-        world.init();
         System.out.println("Done!");
     }
 
     public void run() {
-        init();
+        try {
+            init();
+        } catch (Exception ex) {
+            Logger.getLogger(Singularity.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         float delta;
         float acc = 0f;
         float interval = 1f / Const.TARGET_UPS;
+
         while(!window.shouldClose()) {
             delta = timer.getDelta();
             acc += delta;
@@ -75,6 +81,7 @@ public class Singularity implements Runnable {
             if(acc >= interval) {
                 update();
                 timer.updateUPS();
+                Chunk.updates = 0;
                 acc -= interval;
             }
 
@@ -88,8 +95,9 @@ public class Singularity implements Runnable {
                 sync(Const.TARGET_FPS);
             }
 
-            System.out.println("FPS: " + timer.getFPS() + " UPS: " + timer.getUPS());
+            System.out.println("FPS: " + timer.getFPS() + " UPS: " + timer.getUPS() + " Chunk updates: " + Chunk.updates);
         }
+
         world.save();
         close();
     }
@@ -97,15 +105,14 @@ public class Singularity implements Runnable {
     private void update() {
         if(window.getMouseState()) {
             camera.getFrustumFilter().updateFrustum(window.getProjectionMatrix(), Transformation.getViewMatrix(camera));
-            world.update(renderer);
+            camera.pick(world);
+            world.update();
         }
     }
 
     private void render() {
-        camera.getSelectedBlock().set(-1, -1, -1);
-
-        worldRenderer.render(renderer, 0);
-        worldRenderer.render(renderer, 1);
+        worldRenderer.updateDirtyChunks(renderer, world.getPlayer());
+        worldRenderer.render(renderer);
 
         renderer.render(camera, font);
         window.swapBuffers();

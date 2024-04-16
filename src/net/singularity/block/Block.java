@@ -4,8 +4,6 @@ import net.singularity.physics.AABB;
 import net.singularity.utils.Const;
 import net.singularity.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class Block {
@@ -21,6 +19,19 @@ public class Block {
     public static final Block glass = new TransparentBlock(8, 39);
     public static final Block water = new LiquidBlock(9, 14);
 
+    public static final int BOTTOM_FACE = 1;
+    public static final int TOP_FACE = 2;
+    public static final int BACK_FACE = 4;
+    public static final int FRONT_FACE = 8;
+    public static final int RIGHT_FACE = 16;
+    public static final int LEFT_FACE = 32;
+    public static final int LAYER_BOTTOM = 64;
+    public static final int LAYER_TOP = 128;
+    public static final int LAYER_BACK = 256;
+    public static final int LAYER_FRONT = 512;
+    public static final int LAYER_RIGHT = 1024;
+    public static final int LAYER_LEFT = 2048;
+
     public int tex;
     public final int id;
 
@@ -34,38 +45,43 @@ public class Block {
         this.tex = tex;
     }
 
-    public List<Integer> getFacesToRender(World world, int x, int y, int z, int layer) {
-        List<Integer> facesToRender = new ArrayList<>();
+    public int getFacesToRender(World world, int x, int y, int z) {
+        int flags = 0;
 
         if(this.getBlockType() == EBlockType.BUSH) {
-            if(this.shouldRenderFace(world, x, y - 1, z, layer) || this.shouldRenderFace(world, x, y + 1, z, layer) ||
-                    this.shouldRenderFace(world, x - 1, y, z, layer) || this.shouldRenderFace(world, x + 1, y, z, layer) ||
-                    this.shouldRenderFace(world, x, y, z - 1, layer) || this.shouldRenderFace(world, x, y, z + 1, layer)) {
-                facesToRender.add(6);
-                facesToRender.add(7);
+            if(this.shouldRenderFace(world, x, y - 1, z) || this.shouldRenderFace(world, x, y + 1, z) ||
+                    this.shouldRenderFace(world, x - 1, y, z) || this.shouldRenderFace(world, x + 1, y, z) ||
+                    this.shouldRenderFace(world, x, y, z - 1) || this.shouldRenderFace(world, x, y, z + 1)) {
+                flags = 1 + (world.isLit(x, y, z) ? 0 : 1);
             }
         } else {
-            if(this.shouldRenderFace(world, x, y - 1, z, layer)) {
-                facesToRender.add(0);
+            if(this.shouldRenderFace(world, x, y - 1, z)) {
+                flags |= BOTTOM_FACE;
+                flags |= (world.isLit(x, y - 1, z) ? 0 : 1) * LAYER_BOTTOM;
             }
-            if(this.shouldRenderFace(world, x, y + 1, z, layer) || this.getBlockType() == EBlockType.SLAB) {
-                facesToRender.add(1);
+            if(this.shouldRenderFace(world, x, y + 1, z)) {
+                flags |= TOP_FACE;
+                flags |= (world.isLit(x, y + 1, z) ? 0 : 1) * LAYER_TOP;
             }
-            if(this.shouldRenderFace(world, x, y, z - 1, layer)) {
-                facesToRender.add(2);
+            if(this.shouldRenderFace(world, x, y, z - 1)) {
+                flags |= BACK_FACE;
+                flags |= (world.isLit(x, y, z - 1) ? 0 : 1) * LAYER_BACK;
             }
-            if(this.shouldRenderFace(world, x, y, z + 1, layer)) {
-                facesToRender.add(3);
+            if(this.shouldRenderFace(world, x, y, z + 1)) {
+                flags |= FRONT_FACE;
+                flags |= (world.isLit(x, y, z + 1) ? 0 : 1) * LAYER_FRONT;
             }
-            if(this.shouldRenderFace(world, x - 1, y, z, layer)) {
-                facesToRender.add(4);
+            if(this.shouldRenderFace(world, x - 1, y, z)) {
+                flags |= RIGHT_FACE;
+                flags |= (world.isLit(x - 1, y, z) ? 0 : 1) * LAYER_RIGHT;
             }
-            if(this.shouldRenderFace(world, x + 1, y, z, layer)) {
-                facesToRender.add(5);
+            if(this.shouldRenderFace(world, x + 1, y, z)) {
+                flags |= LEFT_FACE;
+                flags |= (world.isLit(x + 1, y, z) ? 0 : 1) * LAYER_LEFT;
             }
         }
 
-        return facesToRender;
+        return flags;
     }
 
     public float[] getFaceTexCoords(int face) {
@@ -139,8 +155,8 @@ public class Block {
 
     }
 
-    protected boolean shouldRenderFace(World world, int x, int y, int z, int layer) {
-        return !(world.isSolidTile(x, y, z) && world.isLightBlocker(x, y, z)) && world.isLit(x, y, z) ^ layer == 1;
+    protected boolean shouldRenderFace(World world, int x, int y, int z) {
+        return !(world.isSolidTile(x, y, z) && world.isLightBlocker(x, y, z));
     }
 
     protected int getTexture(int face) {

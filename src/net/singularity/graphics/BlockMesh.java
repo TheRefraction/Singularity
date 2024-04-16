@@ -26,7 +26,7 @@ public class BlockMesh {
                     new Vertex(new Vector3f(0, 1, 1), new Vector2f(1, 1)),
             }, tileIndices));
 
-    public static final BlockMesh blockFace2 = new BlockMesh(2, new Mesh(
+    public static final BlockMesh blockBack = new BlockMesh(2, new Mesh(
             new Vertex[] {
                     new Vertex(new Vector3f(0, 1, 0), new Vector2f(0, 1)),
                     new Vertex(new Vector3f(1, 1, 0), new Vector2f(0, 0)),
@@ -34,7 +34,7 @@ public class BlockMesh {
                     new Vertex(new Vector3f(0, 0, 0), new Vector2f(1, 1)),
             }, tileIndices));
 
-    public static final BlockMesh blockFace3 = new BlockMesh(3, new Mesh(
+    public static final BlockMesh blockFront = new BlockMesh(3, new Mesh(
             new Vertex[] {
                     new Vertex(new Vector3f(0, 1, 1), new Vector2f(0, 1)),
                     new Vertex(new Vector3f(0, 0, 1), new Vector2f(0, 0)),
@@ -42,7 +42,7 @@ public class BlockMesh {
                     new Vertex(new Vector3f(1, 1, 1), new Vector2f(1, 1)),
             }, tileIndices));
 
-    public static final BlockMesh blockFace4 = new BlockMesh(4, new Mesh(
+    public static final BlockMesh blockRight = new BlockMesh(4, new Mesh(
             new Vertex[] {
                     new Vertex(new Vector3f(0, 1, 1), new Vector2f(0, 1)),
                     new Vertex(new Vector3f(0, 1, 0), new Vector2f(0, 0)),
@@ -50,7 +50,7 @@ public class BlockMesh {
                     new Vertex(new Vector3f(0, 0, 1), new Vector2f(1, 1)),
             }, tileIndices));
 
-    public static final BlockMesh blockFace5 = new BlockMesh(5, new Mesh(
+    public static final BlockMesh blockLeft = new BlockMesh(5, new Mesh(
             new Vertex[] {
                     new Vertex(new Vector3f(1, 0, 1), new Vector2f(0, 1)),
                     new Vertex(new Vector3f(1, 0, 0), new Vector2f(0, 0)),

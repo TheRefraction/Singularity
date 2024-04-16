@@ -1,9 +1,8 @@
 package net.singularity.world;
 
-import net.singularity.block.Block;
+import net.singularity.entity.Player;
 import net.singularity.physics.AABB;
 import net.singularity.rendering.Renderer;
-import net.singularity.utils.Utils;
 
 public class Chunk {
     public final World world;
@@ -18,6 +17,16 @@ public class Chunk {
     public final float z;
     public final AABB aabb;
     private boolean dirty = true;
+    public long dirtiedTime = 0L;
+    public static int updates;
+    private static long totalTime;
+    private static int totalUpdates;
+
+    static {
+        updates = 0;
+        totalUpdates = 0;
+        totalTime = 0L;
+    }
 
     public Chunk(World world, int x0, int y0, int z0, int x1, int y1, int z1) {
         this.world = world;
@@ -33,45 +42,47 @@ public class Chunk {
         this.aabb = new AABB(x0, y0, z0, x1, y1, z1);
     }
 
-    public void render(Renderer renderer, int layer) {
+    public void rebuild(Renderer renderer) {
         this.dirty = false;
+        int tiles = 0;
+        updates++;
+
+        long before = System.nanoTime();
         for(int x = this.x0; x < this.x1; ++x) {
             for(int y = this.y0; y < this.y1; ++y) {
                 for(int z = this.z0; z < this.z1; ++z) {
                     int tileId = this.world.getTile(x, y, z);
+                    renderer.processBlock(this.world, tileId, x, y, z); //TO SEE
                     if (tileId > 0) {
-                        renderer.processBlock(this.world, tileId, x, y, z, layer);
+                        tiles++;
                     }
                 }
             }
         }
-    }
 
-    public void selectBlock() {
-        float closest = Float.POSITIVE_INFINITY;
-        float dist;
-        for(int x = this.x0; x < this.x1; ++x) {
-            for(int y = this.y0; y < this.y1; ++y) {
-                for(int z = this.z0; z < this.z1; ++z) {
-                    int tileId = this.world.getTile(x, y, z);
-                    dist = Utils.getDistance(x, y, z, world.getCamera().getPos().x, world.getCamera().getPos().y, world.getCamera().getPos().z);
-                    if (tileId > 0 && dist < 4.0f) {
-                        AABB aabb = Block.blocks[tileId].getAABB(x, y, z);
-                        if(aabb != null && world.getCamera().getRayCast().test(aabb.x0, aabb.y0, aabb.z0, aabb.x1, aabb.y1, aabb.z1) && dist < closest) {
-                            closest = dist;
-                            world.getCamera().getSelectedBlock().set(x, y, z);
-                        }
-                    }
-                }
-            }
+        long after = System.nanoTime();
+        if(tiles > 0) {
+            totalTime += after - before;
+            totalUpdates++;
         }
     }
 
     public void setDirty() {
+        if(!this.dirty) {
+            this.dirtiedTime = System.currentTimeMillis();
+        }
+
         this.dirty = true;
     }
 
     public boolean isDirty() {
         return this.dirty;
+    }
+
+    public float distanceToSqr(Player player) {
+        float xd = player.pos.x - this.x;
+        float yd = player.pos.y - this.y;
+        float zd = player.pos.z - this.z;
+        return xd * xd + yd * yd + zd * zd;
     }
 }

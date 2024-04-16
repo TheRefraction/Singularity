@@ -3,7 +3,7 @@ package net.singularity.entity;
 import net.singularity.block.Block;
 import net.singularity.physics.AABB;
 import net.singularity.system.Input;
-import net.singularity.utils.Utils;
+import net.singularity.utils.HitResult;
 import net.singularity.world.World;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -56,38 +56,50 @@ public class Player extends Entity {
             this.incPos.y = 0.4f;
 
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftButtonBuffer <= 0) {
-            int x = world.getCamera().getSelectedBlock().x;
-            int y = world.getCamera().getSelectedBlock().y;
-            int z = world.getCamera().getSelectedBlock().z;
-            if(world.getTile(x, y, z) != Block.bedrock.id) {
-                world.setTile(x, y, z, 0);
-                leftButtonBuffer = 8;
+            HitResult hitResult = world.getCamera().getHitResult();
+            if(hitResult != null) {
+                Block old = Block.blocks[world.getTile(hitResult.x, hitResult.y, hitResult.z)];
+                boolean changed = world.setTile(hitResult.x, hitResult.y, hitResult.z, 0);
+                if(old != null && changed) {
+                    old.destroy(); // to change
+                    leftButtonBuffer = 8;
+                }
             }
         }
 
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT) && rightButtonBuffer <= 0) {
-            int fb_dx = -1, fb_dy = -1, fb_dz = -1;
-            int x = world.getCamera().getSelectedBlock().x;
-            int y = world.getCamera().getSelectedBlock().y;
-            int z = world.getCamera().getSelectedBlock().z;
-            float distance = Utils.getDistance(x, y, z, pos.x, pos.y, pos.z);
-            for(int i = 0; i < 6; i++) {
-                int b_dx = x + (i == 0 ? -1 : (i == 1 ? 1 : 0));
-                int b_dy = y + (i == 2 ? -1 : (i == 3 ? 1 : 0));
-                int b_dz = z + (i == 4 ? -1 : (i == 5 ? 1 : 0));
-                float dist = Utils.getDistance(b_dx, b_dy, b_dz, pos.x, pos.y, pos.z);
+            HitResult hitResult = world.getCamera().getHitResult();
+            if(hitResult != null) {
+                int x = hitResult.x;
+                int y = hitResult.y;
+                int z = hitResult.z;
 
-                if(world.getTile(b_dx, b_dy, b_dz) == 0 && !this.aabb.intersects(new AABB(b_dx, b_dy, b_dz, b_dx + 1, b_dy + 1, b_dz + 1)) && world.getCamera().getRayCast().test(b_dx, b_dy, b_dz, b_dx + 1, b_dy + 1, b_dz + 1) && dist < distance) {
-                    distance = dist;
-                    fb_dx = b_dx;
-                    fb_dy = b_dy;
-                    fb_dz = b_dz;
+                switch(hitResult.f) {
+                    case 0:
+                        y--;
+                        break;
+                    case 1:
+                        y++;
+                        break;
+                    case 2:
+                        z--;
+                        break;
+                    case 3:
+                        z++;
+                        break;
+                    case 4:
+                        x--;
+                        break;
+                    case 5:
+                        x++;
+                        break;
                 }
-            }
-            if(fb_dx != -1 && fb_dy != -1 && fb_dz != -1) {
-                world.setTile(fb_dx, fb_dy, fb_dz, Block.cobblestone.id);
-                world.getCamera().getSelectedBlock().set(-1, -1, -1);
-                rightButtonBuffer = 8;
+
+                AABB aabb = Block.blocks[Block.rose.id].getAABB(x, y, z);
+                if(aabb == null || world.isFree(aabb)) {
+                    world.setTile(x, y, z, Block.cobblestone.id);
+                    rightButtonBuffer = 8;
+                }
             }
         }
 

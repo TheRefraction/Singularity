@@ -1,23 +1,27 @@
 package net.singularity.system;
 
-import org.joml.RayAabIntersection;
+import net.singularity.physics.AABB;
+import net.singularity.utils.HitResult;
+import net.singularity.utils.Transformation;
+import net.singularity.world.World;
+import org.joml.Intersectionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
+
+import java.util.ArrayList;
 
 public class Camera {
 
-    private Vector3f pos, rot, dir;
-    private FrustumCullingFilter frustumFilter;
-    private RayAabIntersection rayCast;
-    private Vector3i selectedBlock;
+    private final Vector3f pos, rot, dir;
+    private final Frustum frustumFilter;
+    private HitResult hitResult = null;
+    private static final int PICK_RANGE = 4;
 
     public Camera() {
         this.pos = new Vector3f(0, 0, 0);
         this.rot = new Vector3f(0, 0, 0);
-        this.dir = new Vector3f(0,0,1);
-        this.frustumFilter = new FrustumCullingFilter();
-        this.rayCast = new RayAabIntersection();
-        this.selectedBlock = new Vector3i(-1, -1, -1);
+        this.dir = new Vector3f(0, 0, 0);
+        this.frustumFilter = new Frustum();
     }
 
     public void setPosition(float x, float y, float z) {
@@ -35,10 +39,43 @@ public class Camera {
     public void update(float x, float y, float z, float r_x, float r_y, float r_z) {
         setPosition(x, y, z);
         setRotation(r_x, r_y, r_z);
+    }
 
-        dir = new Vector3f(0,0,1).rotateX((float) Math.toRadians(r_x)).rotateY((float) Math.toRadians(r_y)).rotateZ((float) Math.toRadians(r_z));
+    public void pick(World world) {
+        hitResult = null;
+        Vector2f nearFar = new Vector2f(0,0);
+        Transformation.getViewMatrix(this).positiveZ(dir).negate();
+        float closestDistance = Float.POSITIVE_INFINITY;
 
-        rayCast.set(x, y, z, dir.x, dir.y, -dir.z);
+        ArrayList<AABB> aabbs = world.getCubes(new AABB(pos.x - PICK_RANGE, pos.y - PICK_RANGE, pos.z - PICK_RANGE, pos.x + PICK_RANGE, pos.y + PICK_RANGE, pos.z + PICK_RANGE), true);
+        for(AABB aabb : aabbs) {
+            if(Intersectionf.intersectRayAab(pos, dir, new Vector3f(aabb.x0, aabb.y0, aabb.z0), new Vector3f(aabb.x1, aabb.y1, aabb.z1), nearFar) && nearFar.x < closestDistance) {
+                closestDistance = nearFar.x;
+
+                float xI = pos.x + closestDistance * dir.x;
+                float yI = pos.y + closestDistance * dir.y;
+                float zI = pos.z + closestDistance * dir.z;
+
+                int face = -1;
+                if(xI == aabb.x0) {
+                    face = 4;
+                } else if(xI == aabb.x1) {
+                    face = 5;
+                } else if(yI == aabb.y0) {
+                    face = 0;
+                } else if(yI == aabb.y1) {
+                    face = 1;
+                } else if(zI == aabb.z0) {
+                    face = 2;
+                } else if(zI == aabb.z1) {
+                    face = 3;
+                }
+
+                if(face != -1) {
+                    hitResult = new HitResult((int) aabb.x0, (int) aabb.y0, (int) aabb.z0, face);
+                }
+            }
+        }
     }
 
     public Vector3f getPos() {
@@ -49,15 +86,11 @@ public class Camera {
         return rot;
     }
 
-    public FrustumCullingFilter getFrustumFilter() {
+    public Frustum getFrustumFilter() {
         return frustumFilter;
     }
 
-    public RayAabIntersection getRayCast() {
-        return rayCast;
-    }
-
-    public Vector3i getSelectedBlock() {
-        return selectedBlock;
+    public HitResult getHitResult() {
+        return hitResult;
     }
 }

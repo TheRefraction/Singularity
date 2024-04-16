@@ -1,8 +1,8 @@
 package net.singularity.utils;
 
 public class Const {
-    public static final String TITLE = "sg-04152024";
-    public static final String GAME_VERSION = "0.0.1";
+    public static final String TITLE = "Singularity";
+    public static final String GAME_VERSION = "0.0.1a";
 
     public static final int TARGET_UPS = 40;
     public static final int TARGET_FPS = 60;
@@ -14,8 +14,10 @@ public class Const {
     public static final float MOUSE_SENSITIVITY = 0.2f;
     public static final float COLLISION_GRANULARITY = 0f;
 
-    public static final float BLOCK_TEX_UV_STEP = 0.0624375f;
+    public static final float BLOCK_TEX_UV_STEP = 0.0625f;
     public static final float FONT_TEX_UV_STEP = 0.0625f;
 
-    public static final int BLOCK_UPDATE_INTERVAL = 400;
+    public static final int BLOCK_UPDATE_INTERVAL = 800;
+
+    public static final int CHUNK_SIZE = 16;
 }

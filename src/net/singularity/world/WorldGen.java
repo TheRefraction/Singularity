@@ -11,10 +11,10 @@ public class WorldGen {
     private final int depth;
     private final Random random = new Random();
 
-    public WorldGen(int width, int height, int depth) {
+    public WorldGen(int width, int depth, int height) {
         this.width = width;
-        this.height = height;
         this.depth = depth;
+        this.height = height;
     }
 
     public byte[] generateMap() {

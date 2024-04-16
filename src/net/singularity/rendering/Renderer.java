@@ -6,15 +6,11 @@ import net.singularity.system.Camera;
 import net.singularity.system.Window;
 import net.singularity.text.Font;
 import net.singularity.world.World;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
 
-import java.util.ArrayList;
-import java.util.List;
 public class Renderer {
 
-    private Window window;
-    private Textures textures;
+    private final Window window;
+    private final Textures textures;
     private BlockRenderer blockRenderer;
     private TextRenderer textRenderer;
 
@@ -31,24 +27,20 @@ public class Renderer {
         textRenderer.init();
     }
 
+    public void renderChunk(Camera camera, byte[] blocks, int width, int height, int x0, int y0, int z0) {
+        blockRenderer.render(camera, blocks, width, height, x0, y0, z0);
+    }
+
     public void render(Camera camera, Font font) {
-        blockRenderer.render(camera);
         textRenderer.render(font);
     }
 
-    public void processBlock(World world, int tileId, int x, int y, int z, int layer) {
-        List<Integer> facesToRender = Block.blocks[tileId].getFacesToRender(world, x, y, z, layer);
-        for(int face : facesToRender) {
-            Vector3i key = new Vector3i(tileId, face, layer);
-            List<Vector3f> blockList = blockRenderer.getBlocks().get(key);
-            if (blockList != null)
-                blockList.add(new Vector3f(x, y, z));
-            else {
-                List<Vector3f> newPosList = new ArrayList<>();
-                newPosList.add(new Vector3f(x, y, z));
-                blockRenderer.getBlocks().put(key, newPosList);
-            }
+    public void processBlock(World world, int tileId, int x, int y, int z) {
+        int flags = 0;
+        if(tileId > 0) {
+            flags = Block.blocks[tileId].getFacesToRender(world, x, y, z);
         }
+        blockRenderer.getData().set((y * world.height + z) * world.width + x, flags);
     }
 
     public void destroy() {
