@@ -9,8 +9,9 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class Player extends Entity {
-    private double oldMouseX = 0, oldMouseY = 0, newMouseX, newMouseY;
+    private double oldMouseX = 0, oldMouseY = 0, newMouseX, newMouseY, oldScrollY = 0;
     private int leftButtonBuffer = 0, rightButtonBuffer = 0;
+    public int currentBlock = 1;
 
     public Player(World world) {
         super(world, null);
@@ -55,14 +56,25 @@ public class Player extends Entity {
         if(Input.isKeyDown(GLFW.GLFW_KEY_SPACE) && this.onGround)
             this.incPos.y = 0.4f;
 
+        if(Input.getScrollY() > oldScrollY) {
+            this.currentBlock++;
+            if(Block.blocks[this.currentBlock] == null) {
+                this.currentBlock--;
+            }
+        } else if(Input.getScrollY() < oldScrollY && this.currentBlock > 1) {
+            this.currentBlock--;
+        }
+
         if(Input.isButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT) && leftButtonBuffer <= 0) {
             HitResult hitResult = world.getCamera().getHitResult();
             if(hitResult != null) {
                 Block old = Block.blocks[world.getTile(hitResult.x, hitResult.y, hitResult.z)];
-                boolean changed = world.setTile(hitResult.x, hitResult.y, hitResult.z, 0);
-                if(old != null && changed) {
-                    old.destroy(); // to change
-                    leftButtonBuffer = 8;
+                if(old != null && old != Block.bedrock) {
+                    boolean changed = world.setTile(hitResult.x, hitResult.y, hitResult.z, 0);
+                    if (changed) {
+                        old.destroy(); // to change
+                        leftButtonBuffer = 8;
+                    }
                 }
             }
         }
@@ -95,9 +107,9 @@ public class Player extends Entity {
                         break;
                 }
 
-                AABB aabb = Block.blocks[Block.rose.id].getAABB(x, y, z);
+                AABB aabb = Block.blocks[this.currentBlock].getAABB(x, y, z);
                 if(aabb == null || world.isFree(aabb)) {
-                    world.setTile(x, y, z, Block.cobblestone.id);
+                    world.setTile(x, y, z, this.currentBlock);
                     rightButtonBuffer = 8;
                 }
             }
@@ -122,5 +134,6 @@ public class Player extends Entity {
 
         oldMouseX = newMouseX;
         oldMouseY = newMouseY;
+        oldScrollY = Input.getScrollY();
     }
 }

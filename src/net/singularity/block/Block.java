@@ -16,8 +16,15 @@ public class Block {
     public static final Block bedrock = new Block(5, 17);
     public static final Block rose = new BushBlock(6, 12);
     public static final Block dandelion = new BushBlock(7, 13);
-    public static final Block glass = new TransparentBlock(8, 39);
-    public static final Block water = new LiquidBlock(9, 14);
+    public static final Block mushroomRed = new BushBlock(8, 28);
+    public static final Block mushroomBrown = new BushBlock(9, 29);
+    public static final Block web = new BushBlock(10, 11);
+    public static final Block glass = new TransparentBlock(11, 39);
+    public static final Block water = new LiquidBlock(12, 14);
+    public static final Block log = new LogBlock(13, 20);
+    public static final Block leaves = new NonSolidBlock(14, 22);
+    public static final Block wood = new Block(15, 4);
+    public static final Block sappling = new BushBlock(16, 15);
 
     public static final int BOTTOM_FACE = 1;
     public static final int TOP_FACE = 2;
